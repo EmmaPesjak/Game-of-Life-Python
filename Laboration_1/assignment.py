@@ -20,7 +20,7 @@ Expected output:
 '''
 
 # TODO: implement your solution for pseudo code!
-
+TOTAL = A + int(B) + int(C)
 print("{} + {} + {} = {}".format(A, B, C, TOTAL))  # DO NOT MODIFY
 
 # -----------------------------------------------------------------
@@ -38,5 +38,8 @@ Expected output:
 '''
 
 # TODO: implement your solution for pseudo code!
-
+if str(TOTAL) in TEXT:
+    OUTPUT = "true that"
+else:
+    OUTPUT = "nope"
 print("Value of 'TOTAL' exists in string: {}".format(OUTPUT))  # DO NOT MODIFY

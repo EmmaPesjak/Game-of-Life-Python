@@ -33,7 +33,15 @@ def authenticate_user(credentials: str) -> bool:
     VALIDATE that both values corresponds to expected credentials existing within dictionary.
     RETURN outcome of validation as BOOLEAN VALUE.
     '''
-    pass  # TODO: Replace with implementation!
+    # Separate username and password from credentials
+    credentials_split = credentials.split(" ")
+
+    user_tmp = format_username(credentials_split[0:2])
+    pass_tmp = decrypt_password(credentials_split[2])
+
+    # Check in dictionary if credentials are valid.
+    if user_tmp in agents:
+        return agents[user_tmp] == pass_tmp
 
 
 def format_username(username: list) -> str:
@@ -45,8 +53,12 @@ def format_username(username: list) -> str:
     REPLACE empty space between given name and surname with UNDERSCORE '_'
     RETURN formatted username as string value.
     '''
-    pass  # TODO: Replace with implementation!
 
+    #Username is always given name and surname, since we need to be
+    # case-insensitive we need to format the username
+    username[0] = username[0][0].upper() + username[0][1:].lower()
+    username[1] = username[1][0].upper() + username[1][1:].lower()
+    return "_".join(username)
 
 def decrypt_password(password: str) -> str:
     """Procedure used to decrypt user provided password"""
@@ -65,6 +77,15 @@ def decrypt_password(password: str) -> str:
     '''
     pass  # TODO: Replace with implementation!
 
+    for index, char in enumerate(password):
+        if index % 2 == 0:
+            j = chr(ord(char) + rot7)
+        else:
+            j = chr(ord(char) + rot9)
+        if char in vowels:
+            j = str("0" + j + "0")
+        decrypted = decrypted + j
+    return decrypted
 
 def main():
     """The main program execution. YOU MAY NOT MODIFY ANYTHING IN THIS FUNCTION!!"""

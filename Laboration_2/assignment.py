@@ -35,13 +35,12 @@ def authenticate_user(credentials: str) -> bool:
     '''
     # Separate username and password from credentials
     credentials_split = credentials.split(" ")
-
     user_tmp = format_username(credentials_split[0:2])
     pass_tmp = decrypt_password(credentials_split[2])
 
     # Check in dictionary if credentials are valid.
     if user_tmp in agents:
-        return agents[user_tmp] == pass_tmp
+        return agents[user_tmp] == pass_tmp     # Check if value in dictionary and password are the same.
 
 
 def format_username(username: list) -> str:
@@ -54,8 +53,10 @@ def format_username(username: list) -> str:
     RETURN formatted username as string value.
     '''
 
-    #Username is always given name and surname, since we need to be
-    # case-insensitive we need to format the username
+    # Username is always given name and surname. Since the input is
+    # case-insensitive we need to format the username so that given name and
+    # surname has capitalized first letters, the rest of the letters are lowercase
+    # and the names are combined with an underscore.
     username[0] = username[0][0].upper() + username[0][1:].lower()
     username[1] = username[1][0].upper() + username[1][1:].lower()
     return "_".join(username)
@@ -75,16 +76,17 @@ def decrypt_password(password: str) -> str:
     }
     RETURN decrypted string value
     '''
-    pass  # TODO: Replace with implementation!
 
+    # Decrypt password. Characters at even index positions are rotated 7, odd 9.
+    # Vowels are preceded and succeeded by 0.
     for index, char in enumerate(password):
-        if index % 2 == 0:
-            j = chr(ord(char) + rot7)
+        if index % 2 == 0:                      # Determine if character is at even or odd index position.
+            j = chr(ord(char) + rot7)           # Rotate according to ASCII.
         else:
-            j = chr(ord(char) + rot9)
-        if char in vowels:
-            j = str("0" + j + "0")
-        decrypted = decrypted + j
+            j = chr(ord(char) + rot9)           # Rotate according to ASCII.
+        if char in vowels:                      # Determine if character is a vowel.
+            j = str("0" + j + "0")              # Put 0 before and after vowel.
+        decrypted = decrypted + j               # Put together all characters into a single password.
     return decrypted
 
 def main():

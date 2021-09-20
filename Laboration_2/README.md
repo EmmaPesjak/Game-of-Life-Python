@@ -21,15 +21,14 @@ then stored in a return value.
 This was done with `.upper` and `.lower` for said indexes. For example, if the user input was cHevY chase, 
 the username would be formatted to Chevy_Chase. The `def format_username` was solved differently at first
 (quite similar but with an f-string), then checking back in the laboratory guidance there was the `.join` tip, 
-so I changed it. This is also the part I am the least content with. The code is a bit dense, hard to read and looks 
-confusing at first glance, but it does the job I suppose.
+so it was changed. 
 
 Then the `def decrypt_password` function was completed using `enumerate` in a for loop with if/else statements to decrypt
-the password. Characters at even index positions (determined with a modulus % 2 == 0) were rotated 7, odd 9 accordning 
+the password. Characters at even index positions (determined with a modulus % 2 == 0) were rotated 7, odd 9 according 
 to ASCII using `chr` and `ord`. Vowels were preceded and succeeded by 0 in a string. The completed loop was put together 
 into the return value "decrypted".
 
-Having both the formatted username and decrypted password, and if-statement was written into the `def authenticate_user`
+Having both the formatted username and decrypted password, an if-statement was written into the `def authenticate_user`
 to check if the username existed in the dictionary and then to see if the key output (the value) was the same as the 
 decrypted password.
 
@@ -43,8 +42,10 @@ but the rest was harder, both trying to figure out the functions and how to comb
 and what to return. The learning modules definitely prepared me for this laboration,
 but it was a lot to read and comprehend, not all of it "stuck", and I had to go back and read during the laboration.
 I do not have any previous experience with programming, so there is a lot of new terms and ways to think. Overall,
-I think (and hope) that I did a pretty good job with the code, it works and the purpose has been fulfilled.
-I do not have enough experience to see if my code is easily comprehensible, and do hope for some constructive criticism.
+I think (and hope) that I did a pretty good job with the code, it works and the purpose has been fulfilled. 
+The part I am the least content with is the `def format_username`. The code is a bit dense, hard to read and looks 
+confusing at first glance, but it does the job I suppose. I do not have enough experience to see if my code is easily
+comprehensible, and do hope for some constructive criticism.
 
 
 

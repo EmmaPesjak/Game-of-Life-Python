@@ -3,29 +3,49 @@ Emma Pesjak 2021-09-20
 ## Environment & Tools
 The laboration was performed on a Windows 10 PC with PyCharm 2021.2.1, Python 3.9.7 and Git version 2.33.0.windows.2. 
 The sources of information used for this laboration has been course literature
-(chapter 2 in Pro Git, second edition and chapter 4-9 in Python Basics, fourth edition).
-
-här kanske jag ska lägga till någon mer referens
-https://stackoverflow.com/questions/227459/how-to-get-the-ascii-value-of-a-character
+(chapter 2 in Pro Git, second edition and chapter 4-9 in Python Basics, fourth edition) and a webpage on 
+ASCII-conversion from [Stackoverflow](https://stackoverflow.com/questions/227459/how-to-get-the-ascii-value-of-a-character) 
+accessed 2021-09-19.
 
 ## Purpose
-The purpose of laboration 2 was to 
+The purpose of laboration 2 was to get an understanding of using and combining strings, loops and different 
+functions and to work with user input and validation. 
+
 ## Procedures
+In `def authenticate_user`, to be able to use the user input in credentials, credentials was split with `.split` 
+into given name, surname and password and saved into `user_tmp` and `pass_tmp`.
+
+The function `def format_username` was then completed to format the username so that the given name and surname
+started with capital letters, the rest of the letters were lowercase and the names were combined with an underscore and 
+then stored in a return value. 
+This was done with `.upper` and `.lower` for said indexes. For example, if the user input was cHevY chase, 
+the username would be formatted to Chevy_Chase. The `def format_username` was solved differently at first
+(quite similar but with an f-string), then checking back in the laboratory guidance there was the `.join` tip, 
+so I changed it. This is also the part I am the least content with. The code is a bit dense, hard to read and looks 
+confusing at first glance, but it does the job I suppose.
+
+Then the `def decrypt_password` function was completed using `enumerate` in a for loop with if/else statements to decrypt
+the password. Characters at even index positions (determined with a modulus % 2 == 0) were rotated 7, odd 9 accordning 
+to ASCII using `chr` and `ord`. Vowels were preceded and succeeded by 0 in a string. The completed loop was put together 
+into the return value "decrypted".
+
+Having both the formatted username and decrypted password, and if-statement was written into the `def authenticate_user`
+to check if the username existed in the dictionary and then to see if the key output (the value) was the same as the 
+decrypted password.
 
 ## Discussion
+The laboration was very challenging but fun to do, I really enjoyed the detail and background of the laboratory 
+guidance. It also said enough and gave enough tips without being overly obvious on how to solve the problems.
+
+At first, I was a bit overwhelmed by this laboration. I did not know where to start and found the def authenticate_user
+part the hardest, even though the code is quite short. I immediately understood that I had to split the credentials, 
+but the rest was harder, both trying to figure out the functions and how to combine them, knowing what to call 
+and what to return. The learning modules definitely prepared me for this laboration,
+but it was a lot to read and comprehend, not all of it "stuck", and I had to go back and read during the laboration.
+I do not have any previous experience with programming, so there is a lot of new terms and ways to think. Overall,
+I think (and hope) that I did a pretty good job with the code, it works and the purpose has been fulfilled.
+I do not have enough experience to see if my code is easily comprehensible, and do hope for some constructive criticism.
 
 
 
-
-Perspective: What does the assignment aim to accomplish?
-Should specify concrete goal(s) which will enable some discussion and analysis.
-## Procedures / Genomförande
-Perspective: How can the results (solution) be reproduced?
-What kind of problems emerged and how were these resolved?
-## Discussion / Diskussion
-Perspective: Has the purpose been fulfilled? Determine the suitability of the implementation...
-should alternative approaches and procedures be considered?
-Personal reflections: What did you learn? What did you find to be particularly difficult? Did the
-learning module(s) prepare you sufficiently for the challenge? What could be improved in regards to
-the assignment? Etc.
 

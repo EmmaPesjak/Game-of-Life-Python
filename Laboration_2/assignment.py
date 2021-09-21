@@ -85,7 +85,7 @@ def decrypt_password(password: str) -> str:
         else:
             j = chr(ord(char) + rot9)           # Rotate according to ASCII.
         if char in vowels:                      # Determine if character is a vowel.
-            j = str("0" + j + "0")              # Put 0 before and after vowel.
+            j = "0" + j + "0"             # Put 0 before and after vowel.
         decrypted = decrypted + j               # Put together all characters into a single password.
     return decrypted
 

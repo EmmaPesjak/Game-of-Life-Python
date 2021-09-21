@@ -3,8 +3,9 @@ Emma Pesjak 2021-09-20
 ## Environment & Tools
 The laboration was performed on a Windows 10 PC with PyCharm 2021.2.1, Python 3.9.7 and Git version 2.33.0.windows.2. 
 The sources of information used for this laboration has been course literature
-(chapter 2 in Pro Git, second edition and chapter 4-9 in Python Basics, fourth edition) and a webpage on 
-ASCII-conversion from [Stackoverflow](https://stackoverflow.com/questions/227459/how-to-get-the-ascii-value-of-a-character) 
+(chapter 2 in Pro Git, second edition and chapter 4-9 in Python Basics, fourth edition), 
+[this](https://www.youtube.com/watch?v=W8KRzm-HUcc) video by Corey Schafer and a webpage on ASCII-conversion from
+[Stackoverflow](https://stackoverflow.com/questions/227459/how-to-get-the-ascii-value-of-a-character) 
 accessed 2021-09-19.
 
 ## Purpose
@@ -38,14 +39,14 @@ guidance. It also said enough and gave enough tips without being overly obvious 
 
 At first, I was a bit overwhelmed by this laboration. I did not know where to start and found the def authenticate_user
 part the hardest, even though the code is quite short. I immediately understood that I had to split the credentials, 
-but the rest was harder, both trying to figure out the functions and how to combine them, knowing what to call 
-and what to return. The learning modules definitely prepared me for this laboration,
-but it was a lot to read and comprehend, not all of it "stuck", and I had to go back and read during the laboration.
-I do not have any previous experience with programming, so there is a lot of new terms and ways to think. Overall,
-I think (and hope) that I did a pretty good job with the code, it works and the purpose has been fulfilled. 
-The part I am the least content with is the `def format_username`. The code is a bit dense, hard to read and looks 
-confusing at first glance, but it does the job I suppose. I do not have enough experience to see if my code is easily
-comprehensible, and do hope for some constructive criticism.
+but the rest was harder, both trying to figure out the functions worked and how to combine them, knowing what to call 
+and what to return. I did a lot of trial and error. The learning modules definitely prepared me for this laboration,
+but it was a lot to read and to understand, not all of it "stuck", and I had to go back and read during the laboration.
+I do not have any previous experience with programming, so there is a lot of new terms and ways to think. I also 
+lack enough experience to see if my code is easily comprehensible. Overall, I think (and hope) that I did a pretty 
+good job with the code, it works and the purpose has been fulfilled. The part I am the least content with is 
+the `def format_username`. The code is a bit dense, hard to read and looks confusing at first glance, but it does 
+the job I suppose. 
 
 
 

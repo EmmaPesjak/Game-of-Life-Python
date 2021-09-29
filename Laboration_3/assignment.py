@@ -19,6 +19,8 @@ import argparse
 import logging
 import logging.config
 import json
+import datetime
+
 
 __version__ = '1.1'
 __desc__ = "Program used for measuríng execution time of various Fibonacci implementations!"
@@ -28,15 +30,31 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def create_logger() -> logging.Logger:
     """Create and return logger object."""
-    pass  # TODO: Replace with implementation!
+    # TODO: Replace with implementation!
+    with open("../_Resources/ass3_log_conf.json") as f:
+        data = json.load(f)
+
+    logging.config.dictConfig(data)
+    return logging.getLogger("ass_3_logger")
 
 
 def measurements_decorator(func):
     """Function decorator, used for time measurements."""
     @wraps(func)
     def wrapper(nth_nmb: int) -> tuple:
-        pass  # TODO: Replace with implementation!
+        # TODO: Replace with implementation!
 
+        values = []
+        starttime = datetime.datetime.now()
+        LOGGER.info("Starting measurements...")
+        for num in range(nth_nmb, -1, -1):
+            fib_val = func(num)
+            values.append(fib_val)
+            if num % 5 == 0:
+                LOGGER.debug(f"{num}: {fib_val}")
+        endtime = datetime.datetime.now()
+        duration = endtime - starttime
+        return (duration, values)
     return wrapper
 
 
@@ -64,7 +82,13 @@ def fibonacci_recursive(nth_nmb: int) -> int:
 @measurements_decorator
 def fibonacci_memory(nth_nmb: int) -> int:
     """An recursive approach to find Fibonacci sequence value, storing those already calculated."""
-    pass  # TODO: Replace with implementation!
+    # TODO: Replace with implementation!
+    memory = {0: 0, 1: 1}
+    def fib(_n):
+        if not _n in memory:
+            memory[_n] = fib(_n - 1) + fib(_n - 2)
+        return memory[_n]
+    return fib(nth_nmb)
 
 
 def duration_format(duration: float, precision: str) -> str:
@@ -85,7 +109,13 @@ def duration_format(duration: float, precision: str) -> str:
 def print_statistics(fib_details: dict, nth_value: int):
     """Function which handles printing to console."""
     line = '\n' + ("---------------" * 5)
-    pass  # TODO: Replace with implementation!
+    # TODO: Replace with implementation!
+
+    print(line)
+    print(f"DURATION FOR EACH APPROACH WITHIN INTERVAL: {nth_value}-0".center(72), end="")
+    print(line)
+
+
 
 
 def write_to_file(fib_details: dict):

@@ -19,8 +19,7 @@ import argparse
 import logging
 import logging.config
 import json
-import datetime
-
+from timeit import default_timer as timer
 
 __version__ = '1.1'
 __desc__ = "Program used for measuríng execution time of various Fibonacci implementations!"
@@ -45,14 +44,14 @@ def measurements_decorator(func):
         # TODO: Replace with implementation!
 
         values = []
-        starttime = datetime.datetime.now()
+        starttime = timer()
         LOGGER.info("Starting measurements...")
         for num in range(nth_nmb, -1, -1):
             fib_val = func(num)
             values.append(fib_val)
             if num % 5 == 0:
                 LOGGER.debug(f"{num}: {fib_val}")
-        endtime = datetime.datetime.now()
+        endtime = timer()
         duration = endtime - starttime
         return (duration, values)
     return wrapper
@@ -115,12 +114,33 @@ def print_statistics(fib_details: dict, nth_value: int):
     print(f"DURATION FOR EACH APPROACH WITHIN INTERVAL: {nth_value}-0".center(72), end="")
     print(line)
 
+    print(f"{' ':>15}{'Seconds':>15}{'Milliseconds':>15}{'Microseconds':>15}{'Nanoseconds':>15}")
 
+    for key, value in fib_details.items():
+        sec = duration_format(value[0], "Seconds")
+        millisec = duration_format(value[0], "Milliseconds")
+        microsec = duration_format(value[0], "Microseconds")
+        nanosec = duration_format(value[0], "Nanoseconds")
+        fibs = key.title()
+        print(f"{fibs:<15}{sec:>15}{millisec:>15}{microsec:>15}{nanosec:>15}")
 
 
 def write_to_file(fib_details: dict):
     """Function to write information to file."""
-    pass  # TODO: Replace with implementation!
+    # TODO: Replace with implementation!
+
+    for name, fibb in fib_details.items():
+        with open(f'../_Resources/{name.replace(" ", "_")}.txt', "w") as file:
+            values = fibb[1]
+            seq_nr = []
+            i = len(values)
+            while i > 0:
+                i = i - 1
+                seq_nr.append(i)
+
+            zipped = zip(seq_nr, values)
+            for sequence, value in zipped:
+                file.write(f"{sequence}: {value}\n")
 
 
 def main():

@@ -29,11 +29,9 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def create_logger() -> logging.Logger:
     """Create and return logger object."""
-    # TODO: Replace with implementation!
-    with open("../_Resources/ass3_log_conf.json") as f:
-        data = json.load(f)
-
-    logging.config.dictConfig(data)
+    with open("../_Resources/ass3_log_conf.json") as f:     # Open json file with custom logger configuration.
+        data = json.load(f)                                 # Load into variable.
+    logging.config.dictConfig(data)                         # Set up logging with file in variable.
     return logging.getLogger("ass_3_logger")
 
 
@@ -41,19 +39,17 @@ def measurements_decorator(func):
     """Function decorator, used for time measurements."""
     @wraps(func)
     def wrapper(nth_nmb: int) -> tuple:
-        # TODO: Replace with implementation!
-
-        values = []
-        starttime = timer()
-        LOGGER.info("Starting measurements...")
-        for num in range(nth_nmb, -1, -1):
-            fib_val = func(num)
-            values.append(fib_val)
-            if num % 5 == 0:
-                LOGGER.debug(f"{num}: {fib_val}")
-        endtime = timer()
+        values = []                                 # List of calculated fibonacci values.
+        starttime = timer()                         # Timer for start time.
+        LOGGER.info("Starting measurements...")     # Log info level logger for console output.
+        for num in range(nth_nmb, -1, -1):          # Iterate from nth_nmb to 0.
+            fib_val = func(num)                     # Call fibonacci function to calculate value.
+            values.append(fib_val)                  # Add to list "values".
+            if num % 5 == 0:                        # Log only every fifth iteration with logger below.
+                LOGGER.debug(f"{num}: {fib_val}")   # Log debug level logger for file ass_3.log output.
+        endtime = timer()                           # Timer for end time.
         duration = endtime - starttime
-        return (duration, values)
+        return (duration, values)                   # Return tuple of duration and values.
     return wrapper
 
 
@@ -81,11 +77,10 @@ def fibonacci_recursive(nth_nmb: int) -> int:
 @measurements_decorator
 def fibonacci_memory(nth_nmb: int) -> int:
     """An recursive approach to find Fibonacci sequence value, storing those already calculated."""
-    # TODO: Replace with implementation!
-    memory = {0: 0, 1: 1}
+    memory = {0: 0, 1: 1}   #Dictionary starts with values 0 and 1 to avoid RecursionError
     def fib(_n):
-        if not _n in memory:
-            memory[_n] = fib(_n - 1) + fib(_n - 2)
+        if not _n in memory:                            # If not already in dictionary, do calculation below.
+            memory[_n] = fib(_n - 1) + fib(_n - 2)      # Add key and value to dictionary.
         return memory[_n]
     return fib(nth_nmb)
 
@@ -108,36 +103,41 @@ def duration_format(duration: float, precision: str) -> str:
 def print_statistics(fib_details: dict, nth_value: int):
     """Function which handles printing to console."""
     line = '\n' + ("---------------" * 5)
-    # TODO: Replace with implementation!
 
     print(line)
+    # Print centered header.
     print(f"DURATION FOR EACH APPROACH WITHIN INTERVAL: {nth_value}-0".center(72), end="")
     print(line)
-
+    # Print right justified column headers.
     print(f"{' ':>15}{'Seconds':>15}{'Milliseconds':>15}{'Microseconds':>15}{'Nanoseconds':>15}")
 
+    # Loop over fib_details dictionary to get duration times and row headers.
     for key, value in fib_details.items():
+        # Call duration_format to format duration times.
         sec = duration_format(value[0], "Seconds")
         millisec = duration_format(value[0], "Milliseconds")
         microsec = duration_format(value[0], "Microseconds")
         nanosec = duration_format(value[0], "Nanoseconds")
+        # Variable for row header.
         fibs = key.title()
+        # Print left justified row header and left justified duration times.
         print(f"{fibs:<15}{sec:>15}{millisec:>15}{microsec:>15}{nanosec:>15}")
 
 
 def write_to_file(fib_details: dict):
     """Function to write information to file."""
-    # TODO: Replace with implementation!
-
     for name, fibb in fib_details.items():
-        with open(f'../_Resources/{name.replace(" ", "_")}.txt', "w") as file:
-            values = fibb[1]
-            seq_nr = []
-            i = len(values)
+        with open(f'../_Resources/{name.replace(" ", "_")}.txt', "w") as file:  # Open/create file in write mode.
+            values = fibb[1]        # Make list for fibonacci values.
+            seq_nr = []             # Make list of sequence numbers.
+            i = len(values)         # Variable to count amount of fibonacci values.
+
+            # Loop to append sequence number to list, from nth_nmb to 0.
             while i > 0:
                 i = i - 1
                 seq_nr.append(i)
 
+            # Zip sequence number and fibonacci value and then write to file.
             zipped = zip(seq_nr, values)
             for sequence, value in zipped:
                 file.write(f"{sequence}: {value}\n")

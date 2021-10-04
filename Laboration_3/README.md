@@ -8,7 +8,7 @@ and a webpage on string formatting from [Stackabuse](https://stackabuse.com/form
 accessed 2021-09-30.
 
 ## Purpose
-The purpose of laboration 3 was to get an understanding of file handling, loggers, decorators, different typers of
+The purpose of laboration 3 was to get an understanding of file handling, loggers, decorators, different types of
 functions; iterative and recursive, and to see how to set up a well-structured program. 
 
 ## Procedures
@@ -26,7 +26,7 @@ A timer to mark the start time was put in and the info level logger that stated 
 With a `for` loop that iterated over each fibonacci function in the range of `nth_nmb` to 0, the values were
 appended to the `values` list. Every fifth iteration was also logged at debug level in an if-statement and the 
 `modulus` function. The logger logged both the sequence number and the fibonacci value into a file named ass_3.log.
-After the `for` loopa timer for the end time was put in and the duration was calculated into the variable `duration`.
+After the `for` loop a timer for the end time was put in and the duration was calculated into the variable `duration`.
 The inner wrapper returned the durations and fibonacci values in tuples.
 
 The `def print_statistics` function was completed by some string formatting to comply with the laboratory guidance.
@@ -44,24 +44,25 @@ Sequence number and fibonacci value were then written to file with `.write`, thi
 
 ## Discussion
 
-has purpose been fulfilled?
-suitibility of implementation - well I did not completely follow the pseudocode in "write to file",
-i did a while loop instead of a for loop. 
+The code works, the purpose has been fulfilled, and I feel that I have learned a lot during this laboration. 
+I also feel more confident while coding, it is easier to know what information I need to complete the 
+different functions etc. I did not completely follow the pseudocode in the `write to file` part,
+I did a `while` loop instead of a `for` loop. I did not quite get a `for` loop to work and found it easier with a 
+`while` loop.
 
-as the previous laborations, everything has been new to me
+I am aware that I probably write too many, and slightly unnecessary # comments. Some comments I write may be
+self-explained in the code. This is simply because I want it to be very clear for myself when I go back to my code, 
+since I am not a very experienced coder. I struggled a bit with naming variables in the end of the code, many variables
+were similar, and I know that it is important to choose appropriate variable names for the code to be easily read.
 
-particularly difficult was the concept of decorators, to see how it all connects. also to really understand
-how the recursive functions works by calling themselves.
+As with the previous laborations, everything in this one has been new learning for me. Something that was particularly
+difficult was the concept of decorators, to see how it all connects. Also, to really understand how the recursive 
+functions works by calling themselves.
 
-as always the modules prepared me well for this laboration, I really appriciate the different learning teqniques
-with videos, articles and course litterature. the excercises could have been a bit more challenging and well more. 
-maybe I missed it in the modules, but I did not quite know how to print the statistics with left/right justificaion, 
-which I only found online. 
-
-while this laboration was much more complicated than lab 2, for some reason it did not feel as daunting.
-the previous lab taught me to see the structured code and start implementing bit by bit. 
-what i did find challanging was that in order to see if the code worked, I had to complete several functions 
-in order to see my output, this also made troubleshooting a bit harder. 
-
-struggled a bit with naming variables in the end, not to get confused by similarity
-
+As usual the modules prepared me well for this laboration, I really appreciate the different learning techniques
+with videos, articles and course literature. There could have been a few more, and a bit more challenging exercises for
+these two last modules. Perhaps I missed it in the modules, but I did not quite know how to print the statistics with 
+left/right justification, this I found online. While this laboration was much more complicated than lab 2, 
+for some reason it did not feel as daunting. The previous lab taught me to see the structured code and start 
+implementing bit by bit. Another thing I found challenging was that in order to see if the code worked, I had to 
+complete several functions to be able to see my output, this also made troubleshooting a bit harder. 

@@ -96,32 +96,88 @@ def parse_world_size_arg(_arg: str) -> tuple:
 
 def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
     """ Populate the world with cells and initial states. """
-    pass
 
+    population = {}
+    cell = {} #ska detta bort???????
+    pattern = cb.get_pattern(_seed_pattern, _world_size)
+    width_coords = range(_world_size[0])
+    height_coords = range(_world_size[1])
+    coordinates = itertools.product(width_coords, height_coords)
 
-    population = []
+    for x, y in coordinates:
+        # Declare rim cells.
+        if x == 0 or y == 0 or x == (_world_size[0] -1) or y == (_world_size[1] -1):
+            population[(x, y)] = None
+            continue
+        if pattern != None:
+            if (x, y) in pattern:
+                state = cb.STATE_ALIVE
+            else:
+                state = cb.STATE_DEAD
+        else:
+            random_cell = random.randint(0, 20)
+            if random_cell > 16:
+                state = cb.STATE_ALIVE
+            else:
+                state = cb.STATE_DEAD
 
+        cell["state"] = state
+        cell["neighbours"] = calc_neighbour_positions((x, y))
+        population[(x, y)] = cell
+
+    #cell["state"] = cb.STATE_RIM   när ska detta in???
+
+    return population
 
 
 def calc_neighbour_positions(_cell_coord: tuple) -> list:
     """ Calculate neighbouring cell coordinates in all directions (cardinal + diagonal).
     Returns list of tuples. """
-    pass
+
+    neighbour_pos = []
+    x, y = _cell_coord
+    N = (x, (y - 1))
+    NE = ((x + 1), (y - 1))
+    E = ((x + 1), y)
+    SE = ((x + 1), (y + 1))
+    S = (x, (y + 1))
+    SW = ((x - 1), (y + 1))
+    W = ((x - 1), y)
+    NW = ((x - 1), (y - 1))
+    neighbour_pos.extend([N, NE, E, SE, S, SW, W, NW])
+    return neighbour_pos
 
 
 def run_simulation(_generations: int, _population: dict, _world_size: tuple):
     """ Runs simulation for specified amount of generations. """
-    pass
+
+    for i in range(0, _generations):
+        cb.clear_console()
+        _population = update_world(_population, _world_size)
+        sleep(0.2)
 
 
 def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     """ Represents a tick in the simulation. """
-    pass
+
+    next_gen = {}
+
+
+    return next_gen
+
 
 
 def count_alive_neighbours(_neighbours: list, _cells: dict) -> int:
     """ Determine how many of the neighbouring cells are currently alive. """
-    pass
+
+    living_counter = 0
+    for neighbour in _neighbours:
+        if neighbour........
+            living_counter = living_counter + 1
+    return living_counter
+
+
+
 
 
 def main():

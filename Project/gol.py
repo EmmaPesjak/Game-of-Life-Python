@@ -134,7 +134,6 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
     """ Calculate neighbouring cell coordinates in all directions (cardinal + diagonal).
     Returns list of tuples. """
 
-    neighbour_pos = []
     x, y = _cell_coord
     N = (x, (y - 1))
     NE = ((x + 1), (y - 1))
@@ -144,7 +143,7 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
     SW = ((x - 1), (y + 1))
     W = ((x - 1), y)
     NW = ((x - 1), (y - 1))
-    neighbour_pos.extend([N, NE, E, SE, S, SW, W, NW])
+    neighbour_pos = [N, NE, E, SE, S, SW, W, NW]
     return neighbour_pos
 
 
@@ -161,10 +160,20 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     """ Represents a tick in the simulation. """
 
     next_gen = {}
-
-
+    for coords_, cell in _cur_gen.items():
+        if coords_[0] == _world_size[0] - 1:
+            print("\n")
+        if cell is None:
+            next_gen[coords_] = cell
+            continue
+        print_val = cb.get_print_value(cell["state"])
+        cb.progress(print_val)
+        if count_alive_neighbours(cell["neighbours"], _cur_gen) == 2 or 3:
+            cell["state"] = cb.STATE_ALIVE
+        else:
+            cell["state"] = cb.STATE_DEAD
+        next_gen[coords_] = cell
     return next_gen
-
 
 
 def count_alive_neighbours(_neighbours: list, _cells: dict) -> int:
@@ -172,11 +181,11 @@ def count_alive_neighbours(_neighbours: list, _cells: dict) -> int:
 
     living_counter = 0
     for neighbour in _neighbours:
-        if neighbour........
+        if _cells[neighbour] is None:
+            continue
+        if _cells[neighbour]["state"] == cb.STATE_ALIVE:
             living_counter = living_counter + 1
     return living_counter
-
-
 
 
 

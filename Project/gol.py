@@ -98,7 +98,6 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
     """ Populate the world with cells and initial states. """
 
     population = {}
-    cell = {} #ska detta bort???????
     pattern = cb.get_pattern(_seed_pattern, _world_size)
     width_coords = range(_world_size[0])
     height_coords = range(_world_size[1])
@@ -106,6 +105,7 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
 
     for x, y in coordinates:
         # Declare rim cells.
+        cell = {}
         if x == 0 or y == 0 or x == (_world_size[0] -1) or y == (_world_size[1] -1):
             population[(x, y)] = None
             continue
@@ -161,18 +161,22 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
 
     next_gen = {}
     for coords_, cell in _cur_gen.items():
-        if coords_[0] == _world_size[0] - 1:
-            print("\n")
+        new_cell = {}
+        if coords_[1] == (_world_size[1] - 1):
+            cb.progress("\n")
         if cell is None:
             next_gen[coords_] = cell
             continue
         print_val = cb.get_print_value(cell["state"])
         cb.progress(print_val)
-        if count_alive_neighbours(cell["neighbours"], _cur_gen) == 2 or 3:
-            cell["state"] = cb.STATE_ALIVE
+        if count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
+            new_cell["state"] = cb.STATE_ALIVE
+        if count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
+            new_cell["state"] = cb.STATE_ALIVE
         else:
-            cell["state"] = cb.STATE_DEAD
-        next_gen[coords_] = cell
+            new_cell["state"] = cb.STATE_DEAD
+        new_cell["neighbours"] = cell["neighbours"]
+        next_gen[coords_] = new_cell
     return next_gen
 
 

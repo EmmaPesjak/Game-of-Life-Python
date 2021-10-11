@@ -98,19 +98,20 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
     """ Populate the world with cells and initial states. """
 
     population = {}
+
     pattern = cb.get_pattern(_seed_pattern, _world_size)
     width_coords = range(_world_size[0])
     height_coords = range(_world_size[1])
-    coordinates = itertools.product(width_coords, height_coords)
+    coordinates = itertools.product(height_coords, width_coords)
 
-    for x, y in coordinates:
+    for y, x in coordinates:
         # Declare rim cells.
         cell = {}
         if x == 0 or y == 0 or x == (_world_size[0] -1) or y == (_world_size[1] -1):
-            population[(x, y)] = None
+            population[(y, x)] = None
             continue
         if pattern != None:
-            if (x, y) in pattern:
+            if (y, x) in pattern:
                 state = cb.STATE_ALIVE
             else:
                 state = cb.STATE_DEAD
@@ -122,8 +123,8 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
                 state = cb.STATE_DEAD
 
         cell["state"] = state
-        cell["neighbours"] = calc_neighbour_positions((x, y))
-        population[(x, y)] = cell
+        cell["neighbours"] = calc_neighbour_positions((y, x))
+        population[(y, x)] = cell
 
     #cell["state"] = cb.STATE_RIM   när ska detta in???
 
@@ -134,15 +135,15 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
     """ Calculate neighbouring cell coordinates in all directions (cardinal + diagonal).
     Returns list of tuples. """
 
-    x, y = _cell_coord
-    N = (x, (y - 1))
-    NE = ((x + 1), (y - 1))
-    E = ((x + 1), y)
-    SE = ((x + 1), (y + 1))
-    S = (x, (y + 1))
-    SW = ((x - 1), (y + 1))
-    W = ((x - 1), y)
-    NW = ((x - 1), (y - 1))
+    y, x = _cell_coord
+    N = (y, (x - 1))
+    NE = ((y + 1), (x - 1))
+    E = ((y + 1), x)
+    SE = ((y + 1), (x + 1))
+    S = (y, (x + 1))
+    SW = ((y - 1), (x + 1))
+    W = ((y - 1), x)
+    NW = ((y - 1), (x - 1))
     neighbour_pos = [N, NE, E, SE, S, SW, W, NW]
     return neighbour_pos
 
@@ -162,19 +163,31 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     next_gen = {}
     for coords_, cell in _cur_gen.items():
         new_cell = {}
-        if coords_[1] == (_world_size[1] - 1):
-            cb.progress("\n")
+
         if cell is None:
+            cb.progress(cb.get_print_value(cb.STATE_RIM))
+            if coords_[1] == (_world_size[0] - 1):
+                cb.progress("\n")
             next_gen[coords_] = cell
             continue
+
         print_val = cb.get_print_value(cell["state"])
         cb.progress(print_val)
-        if count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
-            new_cell["state"] = cb.STATE_ALIVE
-        if count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
-            new_cell["state"] = cb.STATE_ALIVE
-        else:
-            new_cell["state"] = cb.STATE_DEAD
+
+        if cell["state"] == cb.STATE_ALIVE:
+            if count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
+                new_cell["state"] = cb.STATE_ALIVE
+            elif count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
+                new_cell["state"] = cb.STATE_ALIVE
+            else:
+                new_cell["state"] = cb.STATE_DEAD
+
+        if cell["state"] == cb.STATE_DEAD:
+            if count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
+                new_cell["state"] = cb.STATE_ALIVE
+            else:
+                new_cell["state"] = cb.STATE_DEAD
+
         new_cell["neighbours"] = cell["neighbours"]
         next_gen[coords_] = new_cell
     return next_gen
@@ -189,6 +202,7 @@ def count_alive_neighbours(_neighbours: list, _cells: dict) -> int:
             continue
         if _cells[neighbour]["state"] == cb.STATE_ALIVE:
             living_counter = living_counter + 1
+
     return living_counter
 
 

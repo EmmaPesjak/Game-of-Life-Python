@@ -25,3 +25,24 @@ accessed 2021-09-30.
 parse_world_size_arg
 had trouble with wrong error message when empty string from .split
 assert was hard to grasp since it is "backwards thinking".
+
+completed the base implementations 
+populate_world
+
+calc_neighbour_positions
+this was the most straigt forward function, basically nothing hard, just make a list of tuples of neighbours
+
+run_simulation
+also pretty straight forward
+
+update_world
+None cells easy fix
+tricky to get the neighbours count right for next gen
+
+count_alive_neighbours
+
+
+
+
+
+furthermore...

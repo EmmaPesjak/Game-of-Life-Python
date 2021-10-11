@@ -31,6 +31,8 @@ populate_world
 
 calc_neighbour_positions
 this was the most straigt forward function, basically nothing hard, just make a list of tuples of neighbours
+am aware that it could be done in one line but thought it was better to list all  N, NW, E, SE.... for readability
+
 
 run_simulation
 also pretty straight forward

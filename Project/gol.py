@@ -125,9 +125,6 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
         cell["state"] = state
         cell["neighbours"] = calc_neighbour_positions((y, x))
         population[(y, x)] = cell
-
-    #cell["state"] = cb.STATE_RIM   när ska detta in???
-
     return population
 
 
@@ -144,8 +141,7 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
     SW = ((y - 1), (x + 1))
     W = ((y - 1), x)
     NW = ((y - 1), (x - 1))
-    neighbour_pos = [N, NE, E, SE, S, SW, W, NW]
-    return neighbour_pos
+    return [N, NE, E, SE, S, SW, W, NW]
 
 
 def run_simulation(_generations: int, _population: dict, _world_size: tuple):
@@ -163,7 +159,6 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     next_gen = {}
     for coords_, cell in _cur_gen.items():
         new_cell = {}
-
         if cell is None:
             cb.progress(cb.get_print_value(cb.STATE_RIM))
             if coords_[1] == (_world_size[0] - 1):
@@ -174,19 +169,12 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
         print_val = cb.get_print_value(cell["state"])
         cb.progress(print_val)
 
-        if cell["state"] == cb.STATE_ALIVE:
-            if count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
-                new_cell["state"] = cb.STATE_ALIVE
-            elif count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
-                new_cell["state"] = cb.STATE_ALIVE
-            else:
-                new_cell["state"] = cb.STATE_DEAD
-
-        if cell["state"] == cb.STATE_DEAD:
-            if count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
-                new_cell["state"] = cb.STATE_ALIVE
-            else:
-                new_cell["state"] = cb.STATE_DEAD
+        if cell["state"] == cb.STATE_ALIVE and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
+            new_cell["state"] = cb.STATE_ALIVE
+        elif count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
+            new_cell["state"] = cb.STATE_ALIVE
+        else:
+            new_cell["state"] = cb.STATE_DEAD
 
         new_cell["neighbours"] = cell["neighbours"]
         next_gen[coords_] = new_cell

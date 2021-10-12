@@ -25,6 +25,7 @@ You run this script as a module:
 """
 
 import argparse
+import ast
 import random
 import json
 import logging
@@ -47,7 +48,17 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def load_seed_from_file(_file_name: str) -> tuple:
     """ Load population seed from file. Returns tuple: population (dict) and world_size (tuple). """
-    pass
+    if not _file_name.endswith(".json"):
+       _file_name = (_file_name + ".json")
+    with open(f"../_Resources/{_file_name}") as f:
+        data = json.load(f)
+        for world_size in data["world_size"]:
+            width = world_size[0]
+            height = world_size[1]
+            size = (width, height)
+        for population in data["population"]:
+            pop = ast.literal_eval(population)
+    return (pop, size)
 
 
 def create_logger() -> logging.Logger:
@@ -144,13 +155,19 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
     return [N, NE, E, SE, S, SW, W, NW]
 
 
-def run_simulation(_generations: int, _population: dict, _world_size: tuple):
+def run_simulation(_nth_generation: int, _population: dict, _world_size: tuple):
     """ Runs simulation for specified amount of generations. """
 
-    for i in range(0, _generations):
-        cb.clear_console()
-        _population = update_world(_population, _world_size)
-        sleep(0.2)
+    cb.clear_console()
+    _population = update_world(_population, _world_size)
+    sleep(0.2)
+
+    if _nth_generation == 0:
+        pass                            #här är något fel, går inte att få ut -g 0, blir oändlig loop
+    if _nth_generation == 1:
+        pass
+    else:
+        run_simulation((_nth_generation - 1), _population, _world_size)
 
 
 def update_world(_cur_gen: dict, _world_size: tuple) -> dict:

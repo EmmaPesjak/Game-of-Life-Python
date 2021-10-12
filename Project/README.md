@@ -44,7 +44,9 @@ tricky to get the neighbours count right for next gen
 count_alive_neighbours
 
 
-
+grade d recursive
+the guidance did not specify if to use memoization in the recursive function, but since we learned 
+in lab 3 that it is faster...
 
 
 furthermore...

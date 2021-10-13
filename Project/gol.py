@@ -48,17 +48,28 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def load_seed_from_file(_file_name: str) -> tuple:
     """ Load population seed from file. Returns tuple: population (dict) and world_size (tuple). """
+
+    # Format filename in case user omits suffix.
     if not _file_name.endswith(".json"):
        _file_name = (_file_name + ".json")
-    with open(f"../_Resources/{_file_name}") as f:
+
+    # create path to files.
+    path = Path(RESOURCES / _file_name)
+    with path.open() as f:
         data = json.load(f)
-        for world_size in data["world_size"]:
-            width = world_size[0]
-            height = world_size[1]
-            size = (width, height)
-        for population in data["population"]:
-            pop = ast.literal_eval(population)
-    return (pop, size)
+        world_size = tuple(data["world_size"])                              # Format world size to tuple.
+        population = {}
+        for coordinates, cell in data["population"].items():
+            coords = ast.literal_eval(coordinates)                          # Format cell coordinates to tuple.
+            cell_dict = {}
+            if cell is None:
+                population[coords] = None                                   # Add rim-cells to population dictionary.
+                continue
+            cell_dict["state"] = cell["state"]                              # Add cell states to cell dictionary.
+            formatted_neighbours = [tuple(n) for n in cell["neighbours"]]   # Format list of tuple neighbours.
+            cell_dict["neighbours"] = formatted_neighbours                  # Add neighbours to cell dictionary.
+            population[coords] = cell_dict            # Add coordinates and cell dictionary to population dictionary.
+    return (population, world_size)
 
 
 def create_logger() -> logging.Logger:
@@ -158,16 +169,13 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
 def run_simulation(_nth_generation: int, _population: dict, _world_size: tuple):
     """ Runs simulation for specified amount of generations. """
 
+    if _nth_generation == 0:
+        return
+
     cb.clear_console()
     _population = update_world(_population, _world_size)
     sleep(0.2)
-
-    if _nth_generation == 0:
-        pass                            #här är något fel, går inte att få ut -g 0, blir oändlig loop
-    if _nth_generation == 1:
-        pass
-    else:
-        run_simulation((_nth_generation - 1), _population, _world_size)
+    run_simulation((_nth_generation - 1), _population, _world_size)
 
 
 def update_world(_cur_gen: dict, _world_size: tuple) -> dict:

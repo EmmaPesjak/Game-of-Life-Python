@@ -10,6 +10,11 @@ accessed 2021-09-30.
 !!
 
 
+https://www.youtube.com/watch?v=9bFvpOFyClI accessed 2021-10-13
+https://stackoverflow.com/questions/18938276/how-to-convert-nested-list-of-lists-into-a-list-of-tuples-in-python-3-3  accessed 2021-10-13
+
+
+
 ## Purpose
 
 ## Procedures
@@ -45,8 +50,11 @@ count_alive_neighbours
 
 
 grade d recursive
-the guidance did not specify if to use memoization in the recursive function, but since we learned 
-in lab 3 that it is faster...
+did not know you could return (void) this caused a hick-up
+
+grade c load seed from file
+pretty straight forward to implement but getting the population dictionary correct was a bit of a challenge.
+
 
 
 furthermore...

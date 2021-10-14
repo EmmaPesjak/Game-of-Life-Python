@@ -74,12 +74,51 @@ def load_seed_from_file(_file_name: str) -> tuple:
 
 def create_logger() -> logging.Logger:
     """ Creates a logging object to be used for reports. """
-    pass
+
+    # Set up logger at info level.
+    gol_logger = logging.getLogger("gol_logger")
+    gol_logger.setLevel(logging.INFO)
+
+    # Set log path and open in write mode.
+    path = Path(RESOURCES / "gol.log")
+    file_handler = logging.FileHandler(path, mode="w")
+    gol_logger.addHandler(file_handler)
+
+    return gol_logger
 
 
-def simulation_decorator(func):
+def simulation_decorator(_func):
     """ Function decorator, used to run full extent of simulation. """
-    pass
+
+    gol_logger = create_logger()
+
+    def wrapper_function(_generations: int, _population: dict, _world_size: tuple):
+        """ Wrapper function, calculates log information and calls decorated function """
+        for generation in range(0, _generations):
+            cb.clear_console()
+
+            # Calculate amount of cells in the population, rim cells excluded.
+            population = len(_population) - ((_world_size[0] * 2) + (_world_size[1] * 2) - 4)
+
+            alive = 0     # Alive counter.
+            dead = 0      # Dead counter.
+            for coords, cell in _population.items():
+                if cell is None:
+                    continue
+
+                if cell["state"] == cb.STATE_ALIVE:
+                    alive = alive + 1
+                elif cell["state"] == cb.STATE_DEAD:
+                    dead = dead + 1
+
+            # Format logger.
+            gol_logger.info(f"GENERATION {generation}\n  Population: {population}\n  Alive: {alive}\n  Dead: {dead}")
+
+            # Call decorated function and store the updated population states.
+            _population = _func(generation, _population, _world_size)
+            sleep(0.2)
+
+    return wrapper_function
 
 
 # -----------------------------------------
@@ -132,7 +171,7 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
         if x == 0 or y == 0 or x == (_world_size[0] -1) or y == (_world_size[1] -1):
             population[(y, x)] = None
             continue
-        if pattern != None:
+        if pattern is not None:
             if (y, x) in pattern:
                 state = cb.STATE_ALIVE
             else:
@@ -166,16 +205,10 @@ def calc_neighbour_positions(_cell_coord: tuple) -> list:
     return [N, NE, E, SE, S, SW, W, NW]
 
 
-def run_simulation(_nth_generation: int, _population: dict, _world_size: tuple):
-    """ Runs simulation for specified amount of generations. """
-
-    if _nth_generation == 0:
-        return
-
-    cb.clear_console()
-    _population = update_world(_population, _world_size)
-    sleep(0.2)
-    run_simulation((_nth_generation - 1), _population, _world_size)
+@simulation_decorator
+def run_simulation(_generations: int, _population: dict, _world_size: tuple):
+    """ Runs a tick in the simulation. """
+    return update_world(_population, _world_size)
 
 
 def update_world(_cur_gen: dict, _world_size: tuple) -> dict:

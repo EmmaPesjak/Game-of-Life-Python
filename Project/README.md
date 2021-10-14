@@ -13,6 +13,9 @@ accessed 2021-09-30.
 https://www.youtube.com/watch?v=9bFvpOFyClI accessed 2021-10-13
 https://stackoverflow.com/questions/18938276/how-to-convert-nested-list-of-lists-into-a-list-of-tuples-in-python-3-3  accessed 2021-10-13
 
+https://www.youtube.com/watch?v=-ARI4Cz-awo accessed 2021-10-14
+https://www.youtube.com/watch?v=jxmzY9soFXg accessed 2021-10-14
+https://www.youtube.com/watch?v=FsAPt_9Bf3U accessed 2021-10-14
 
 
 ## Purpose

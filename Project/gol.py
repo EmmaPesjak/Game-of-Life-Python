@@ -100,19 +100,26 @@ def simulation_decorator(_func):
             # Calculate amount of cells in the population, rim cells excluded.
             population = len(_population) - ((_world_size[0] * 2) + (_world_size[1] * 2) - 4)
 
-            alive = 0     # Alive counter.
-            dead = 0      # Dead counter.
+            alive = 0       # Alive counter.
+            elders = 0      # Elder counter.
+            p_elders = 0    # Prime elders counter.
+            dead = 0        # Dead counter.
             for coords, cell in _population.items():
                 if cell is None:
                     continue
 
-                if cell["state"] == cb.STATE_ALIVE:
+                if cell["state"] != cb.STATE_DEAD:
                     alive = alive + 1
+                if cell["state"] == cb.STATE_ELDER:
+                    elders = elders + 1
+                if cell["state"] == cb.STATE_PRIME_ELDER:
+                    p_elders = p_elders + 1
                 elif cell["state"] == cb.STATE_DEAD:
                     dead = dead + 1
 
             # Format logger.
-            gol_logger.info(f"GENERATION {generation}\n  Population: {population}\n  Alive: {alive}\n  Dead: {dead}")
+            gol_logger.info(f"GENERATION {generation}\n  Population: {population}\n  Alive: {alive}\n  "
+                            f"Elders: {elders}\n  Prime Elders: {p_elders}\n  Dead: {dead}")
 
             # Call decorated function and store the updated population states.
             _population = _func(generation, _population, _world_size)
@@ -185,6 +192,7 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
 
         cell["state"] = state
         cell["neighbours"] = calc_neighbour_positions((y, x))
+        cell["age"] = 0
         population[(y, x)] = cell
     return population
 
@@ -227,12 +235,22 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
         print_val = cb.get_print_value(cell["state"])
         cb.progress(print_val)
 
-        if cell["state"] == cb.STATE_ALIVE and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
+        if cell["state"] != cb.STATE_DEAD and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2:
             new_cell["state"] = cb.STATE_ALIVE
         elif count_alive_neighbours(cell["neighbours"], _cur_gen) == 3:
             new_cell["state"] = cb.STATE_ALIVE
         else:
             new_cell["state"] = cb.STATE_DEAD
+
+        if new_cell["state"] != cb.STATE_DEAD:
+            new_cell["age"] = (cell["age"] + 1)
+        else:
+            new_cell["age"] = 0
+
+        if new_cell["age"] > 10:
+            new_cell["state"] = cb.STATE_PRIME_ELDER
+        elif new_cell["age"] > 4:
+            new_cell["state"] = cb.STATE_ELDER
 
         new_cell["neighbours"] = cell["neighbours"]
         next_gen[coords_] = new_cell
@@ -246,7 +264,7 @@ def count_alive_neighbours(_neighbours: list, _cells: dict) -> int:
     for neighbour in _neighbours:
         if _cells[neighbour] is None:
             continue
-        if _cells[neighbour]["state"] == cb.STATE_ALIVE:
+        if _cells[neighbour]["state"] != cb.STATE_DEAD:
             living_counter = living_counter + 1
 
     return living_counter

@@ -19,12 +19,12 @@ https://www.youtube.com/watch?v=FsAPt_9Bf3U accessed 2021-10-14
 
 
 ## Purpose
+The purpose of this project has been to demonstrate my new programming skills and understanding of all the learning
+modules of this course. Functions, logging, decorators, json-files, file handling etc.
 
 ## Procedures
 
 ## Discussion
-
-
 
 
 
@@ -48,6 +48,8 @@ also pretty straight forward
 update_world
 None cells easy fix
 tricky to get the neighbours count right for next gen
+här är det ju lite fult att jag först sätter alla till alive och sen delar in dem av ålder.
+
 
 count_alive_neighbours
 
@@ -61,3 +63,7 @@ pretty straight forward to implement but getting the population dictionary corre
 
 
 furthermore...
+
+
+eventuellt se om jag kan göra några if/else till oneliners
+eventuellt fixa grannarna utan att göra variabler (N, NW, NE.....)

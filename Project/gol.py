@@ -48,25 +48,29 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def load_seed_from_file(_file_name: str) -> tuple:
     """ Load population seed from file. Returns tuple: population (dict) and world_size (tuple). """
-    if not _file_name.endswith(".json"):                                   # Format filename in case user omits suffix.
-       _file_name = (_file_name + ".json")
+    if not _file_name.endswith(".json"):       # Format filename in case user omits suffix.
+        _file_name = (_file_name + ".json")
 
-    path = Path(RESOURCES / _file_name)                                    # Create path to files.
+    path = Path(RESOURCES / _file_name)        # Create path to files.
     with path.open() as f:
         data = json.load(f)
-        world_size = tuple(data["world_size"])                             # Format world size to tuple.
+        world_size = tuple(data["world_size"])     # Format world size to tuple.
         population = {}
         for coordinates, cell in data["population"].items():
-            coords = ast.literal_eval(coordinates)                         # Format cell coordinates to tuple.
+            coords = ast.literal_eval(coordinates)     # Format cell coordinates to tuple.
             cell_dict = {}
             if cell is None:
-                population[coords] = None                                  # Add rim-cells to population dictionary.
+                population[coords] = None       # Add rim-cells to population dictionary.
                 continue
-            cell_dict["state"] = cell["state"]                             # Add cell states to cell dictionary.
-            formatted_neighbours = [tuple(n) for n in cell["neighbours"]]  # Format list of tuple neighbours.
-            cell_dict["neighbours"] = formatted_neighbours                 # Add neighbours to cell dictionary.
+
+            cell_dict["state"] = cell["state"]      # Add cell states to cell dictionary.
+            # Format list of tuple neighbours.
+            formatted_neighbours = [tuple(n) for n in cell["neighbours"]]
+            # Add neighbours to cell dictionary.
+            cell_dict["neighbours"] = formatted_neighbours
             cell_dict["age"] = 0
-            population[coords] = cell_dict            # Add coordinates and cell dictionary to population dictionary.
+            # Add coordinates and cell dictionary to population dictionary.
+            population[coords] = cell_dict
     return (population, world_size)
 
 
@@ -77,7 +81,8 @@ def create_logger() -> logging.Logger:
     gol_logger = logging.getLogger("gol_logger")
     gol_logger.setLevel(logging.INFO)
 
-    # Set log path, configure file handler at info level and open in write mode.
+    # Set log path, configure file handler at info level and see that file
+    # will be opened in write mode.
     path = Path(RESOURCES / "gol.log")
     file_handler = logging.FileHandler(path, mode="w")
     gol_logger.addHandler(file_handler)
@@ -109,16 +114,18 @@ def simulation_decorator(_func):
 
                 if cell["state"] != cb.STATE_DEAD:
                     alive = alive + 1
+
                 if cell["state"] == cb.STATE_ELDER:
                     elders = elders + 1
-                if cell["state"] == cb.STATE_PRIME_ELDER:
+                elif cell["state"] == cb.STATE_PRIME_ELDER:
                     p_elders = p_elders + 1
                 elif cell["state"] == cb.STATE_DEAD:
                     dead = dead + 1
 
             # Format logger.
-            gol_logger.info(f"GENERATION {generation}\n  Population: {population}\n  Alive: {alive}\n  "
-                            f"Elders: {elders}\n  Prime Elders: {p_elders}\n  Dead: {dead}")
+            gol_logger.info(f"GENERATION {generation}\n  Population: {population}\n  "
+                            f"Alive: {alive}\n  Elders: {elders}\n  Prime Elders: "
+                            f"{p_elders}\n  Dead: {dead}")
 
             # Call decorated function and store the updated population states.
             _population = _func(generation, _population, _world_size)
@@ -138,7 +145,8 @@ def parse_world_size_arg(_arg: str) -> tuple:
     width_height = _arg.split("x")
 
     try:
-        # Raise AssertionError if there are more or less than two values or if empty string in width_height list.
+        # Raise AssertionError if there are more or less than two values or if empty string
+        # in width_height list.
         assert len(width_height) == 2 and "" not in width_height, \
             "World size should contain width and height, separated by 'x'. Ex: '80x40'"
 
@@ -170,13 +178,15 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
     height_coords = range(_world_size[1])
     coordinates = itertools.product(height_coords, width_coords)
 
-    for y, x in coordinates:  # Axes are flipped (y, x) to conform with provided seed patterns in code base.
+    # Axes are flipped (y, x) to conform with provided seed patterns in code base.
+    for y, x in coordinates:
         cell = {}
         # Declare rim cells.
         if x == 0 or y == 0 or x == (_world_size[0] - 1) or y == (_world_size[1] - 1):
             population[(y, x)] = None       # Store in population dictionary.
             continue
-        # In case of seed pattern, set cell state to live or dead according to coordinates in code base.
+        # In case of seed pattern, set cell state to live or dead according to
+        # coordinates in code base.
         if pattern is not None:
             if (y, x) in pattern:
                 state = cb.STATE_ALIVE
@@ -190,8 +200,8 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
             else:
                 state = cb.STATE_DEAD
 
-        # Map cell state, neighbours and age to cell dictionary, then map coordinates and cell dictionary
-        # to population dictionary.
+        # Map cell state, neighbours and age to cell dictionary, then map coordinates
+        # and cell dictionary to population dictionary.
         cell["state"] = state
         cell["neighbours"] = calc_neighbour_positions((y, x))
         cell["age"] = 0
@@ -202,16 +212,10 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
 def calc_neighbour_positions(_cell_coord: tuple) -> list:
     """ Calculate neighbouring cell coordinates in all directions (cardinal + diagonal).
     Returns list of tuples. """
-    y, x = _cell_coord      # Axes are flipped (y, x) to conform with provided seed patterns in code base.
-    N = (y, (x - 1))
-    NE = ((y + 1), (x - 1))
-    E = ((y + 1), x)
-    SE = ((y + 1), (x + 1))
-    S = (y, (x + 1))
-    SW = ((y - 1), (x + 1))
-    W = ((y - 1), x)
-    NW = ((y - 1), (x - 1))
-    return [N, NE, E, SE, S, SW, W, NW]
+    # Axes are flipped (y, x) to conform with provided seed patterns in code base.
+    y, x = _cell_coord
+    return [(y, (x - 1)), ((y + 1), (x - 1)), ((y + 1), x), ((y + 1), (x + 1)), (y, (x + 1)),
+            ((y - 1), (x + 1)), ((y - 1), x), ((y - 1), (x - 1))]
 
 
 @simulation_decorator
@@ -225,7 +229,8 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     next_gen = {}
     for coords_, cell in _cur_gen.items():
         new_cell = {}
-        # Print rim cell, print new line after every last rim cell of each row, update next generation dictionary.
+        # Print rim cell, print new line after every last rim cell of each row,
+        # update next generation dictionary.
         if cell is None:
             cb.progress(cb.get_print_value(cb.STATE_RIM))
             if coords_[1] == (_world_size[0] - 1):
@@ -237,7 +242,8 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
         cb.progress(cb.get_print_value(cell["state"]))
 
         # Determine next generation cell state and age, store in new cell dictionary.
-        if (cell["state"] != cb.STATE_DEAD and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2) \
+        if (cell["state"] != cb.STATE_DEAD and
+            count_alive_neighbours(cell["neighbours"], _cur_gen) == 2) \
                 or (count_alive_neighbours(cell["neighbours"], _cur_gen) == 3):
             new_cell["age"] = (cell["age"] + 1)
             if new_cell["age"] > 10:

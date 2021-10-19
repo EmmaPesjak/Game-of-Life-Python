@@ -1,5 +1,6 @@
 # Project
 Emma Pesjak 2021-10-XX
+
 ## Environment & Tools
 The project was performed on a Windows 10 PC with PyCharm 2021.2.1, Python 3.9.7 and Git version 2.33.0.windows.2. 
 The sources of information used for this project has been course literature
@@ -13,7 +14,7 @@ and videos [1](https://www.youtube.com/watch?v=-ARI4Cz-awo), [2](https://www.you
 
 ## Purpose
 The purpose of this project has been to demonstrate my understanding of what this course's learning modules 
-has aimed to teach, for example functions, logging, decorators, json-files, file handling etc.
+has aimed to teach, for example data types, functions, logging, decorators, json-files and file handling.
 
 
 ## Procedures
@@ -25,53 +26,28 @@ the user input was validated with the help of the `len()` function to see that t
 or too many values, it had to be for example 80x40. Width and height were extracted from the width_height 
 variable and converted to integers with the `int()` function. With an `if-statement` a ValueError would be raised 
 if either height or width were below one. With an `except`, if the user input was for any reason incorrect the program 
-would write an assert message or an error message in the console and use the default value of 80x40.
+would write the assert or error message in the console and use the default value of 80x40.
 
-
-`populate_world`
-
-
-
-def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
-    """ Populate the world with cells and initial states. """
-    population = {}
-
-    pattern = cb.get_pattern(_seed_pattern, _world_size)
-    width_coords = range(_world_size[0])
-    height_coords = range(_world_size[1])
-    coordinates = itertools.product(height_coords, width_coords)
-
-    # Axes are flipped (y, x) to conform with provided seed patterns in code base.
-    for y, x in coordinates:
-        cell = {}
-        # Declare rim cells.
-        if x == 0 or y == 0 or x == (_world_size[0] - 1) or y == (_world_size[1] - 1):
-            population[(y, x)] = None       # Store in population dictionary.
-            continue
-        # In case of seed pattern, set cell state to live or dead according to
-        # coordinates in code base.
-        if pattern is not None:
-            if (y, x) in pattern:
-                state = cb.STATE_ALIVE
-            else:
-                state = cb.STATE_DEAD
-        # Randomize cell state if no pattern is to be used.
-        else:
-            random_cell = random.randint(0, 20)
-            if random_cell > 16:
-                state = cb.STATE_ALIVE
-            else:
-                state = cb.STATE_DEAD
-
-        # Map cell state, neighbours and age to cell dictionary, then map coordinates
-        # and cell dictionary to population dictionary.
-        cell["state"] = state
-        cell["neighbours"] = calc_neighbour_positions((y, x))
-        cell["age"] = 0
-        population[(y, x)] = cell
-    return population
-
-
+The next step was to complete the `populate_world` function which created the initial population of cells.
+An empty population dictionary was created to be later filled in. In case of that the user would use a seed pattern the 
+`get_pattern` function from the code base was called and stored in the variable pattern. Width and height coordinates
+were extracted from the world size tuple input, and to get every coordinate the `range()` function was used. With
+`itertools product()` the coordinates were matched together for each row and column. Then a `for-loop` that iterated 
+over the coordinates was done. In order to conform with the provided seed patterns in the code base, the axes of 
+the coordinates were flipped to (y, x). Another cell dictionary was created since the population dictionary had
+the coordinates as keys and the cell dictionary as values, the cell dictionary contained the cells states and 
+neighbours (and later also age for the grade A implementation). The edge of the world, to define the border consisted 
+of rim-cells, a special type of cell that instead of a cell dictionary had the value of None. The rim-cells were 
+declared with an `if-statement` which stored the rim-cells in the population dictionary, the rim-cells will always 
+have either a 0 in the coordinates or the coordinate of the width or length minus one. To make sure that the rim-cells 
+would not get a cell state, a `continue` was put in the `if-statement` to continue to the next cell coordinates. 
+The rest of the cells states were then declared. With another `if-statement` the cells were set to alive or dead by 
+comparing coordinates with the coordinates in the pattern variable in case of if the user used a seed pattern. The
+`else` then would randomize the cell states if no pattern were to be used. A randomization from 0-20 was done by 
+using the `randint()` function from the random module. A value above 16 would set the cell as alive and a value of 
+16 or below would set the cell as dead. Lastly the cell states and neighbours were mapped to the cell dictionary, 
+the neighbours by calling the `calc_neighbour_positions` function, and the cell dictionary was mapped to the 
+coordinated in the population dictionary.
 
 The `calc_neighbour_positions` function was then completed simply by getting the coordinates from the 
 input "_cell_coord" and putting these into the variables y and x. This might seem backwards but the axes were flipped 
@@ -84,49 +60,18 @@ first cleared the console, then called the `update_world` function to update the
 population states. Lastly the program was delayed by 0.2 milliseconds so that the user actually had time to see the 
 different generation ticks.
 
-
-`update_world`
-
-
-
-def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
-    """ Represents a tick in the simulation. """
-    next_gen = {}
-    for coords_, cell in _cur_gen.items():
-        new_cell = {}
-        # Print rim cell, print new line after every last rim cell of each row,
-        # update next generation dictionary.
-        if cell is None:
-            cb.progress(cb.get_print_value(cb.STATE_RIM))
-            if coords_[1] == (_world_size[0] - 1):
-                cb.progress("\n")
-            next_gen[coords_] = cell
-            continue
-
-        # Print cell that is not rim cell.
-        cb.progress(cb.get_print_value(cell["state"]))
-
-        # Determine next generation cell state and age, store in new cell dictionary.
-        if (cell["state"] != cb.STATE_DEAD and
-            count_alive_neighbours(cell["neighbours"], _cur_gen) == 2) \
-                or (count_alive_neighbours(cell["neighbours"], _cur_gen) == 3):
-            new_cell["age"] = (cell["age"] + 1)
-            if new_cell["age"] > 10:
-                new_cell["state"] = cb.STATE_PRIME_ELDER
-            elif new_cell["age"] > 4:
-                new_cell["state"] = cb.STATE_ELDER
-            else:
-                new_cell["state"] = cb.STATE_ALIVE
-        else:
-            new_cell["state"] = cb.STATE_DEAD
-            new_cell["age"] = 0
-
-        # Store the neighbours for next generation and update next generation dictionary.
-        new_cell["neighbours"] = cell["neighbours"]
-        next_gen[coords_] = new_cell
-    return next_gen
-
-
+Then the `update_world` function was implemented. An empty dictionary for the next generation was made.
+A `for-loop` then iterated over the coordinates and cells in the input current generation dictionary. A new cell 
+dictionary was also made within the `for-loop` for the next generation. Since the rim-cells and ordinary cells 
+have different attributes the rim-cells were taken out with an `if-statement`, then printed out with calling the 
+`progress` and `get_print_value` functions from the code base with the rim-cell stat as input. 
+A newline was also printed after every last rim-cell of each row, using another `if-statement`, so that the
+world would not be printed out in a single line. A `continue` was also put in to continue to the next cell. 
+To print out the rest of the cells, the `progress` and `get_print_value` functions from the code base was called 
+with the cell state as input. The cell states for the next generation was then determined according to the 
+rules of transitioning stated in the project guidance, using an `if-statement` and calling the 
+`count_alive_neighbours` function. Implementations for grade A was also later done here. New states and neighbours 
+was mapped with the coordinates in the next generation dictionary.
 
 In order to complete the `count_alive_neighbours` function, a counter for living neighbours was implemented, then 
 with a `for-loop` that looped over each neighbour, the counter was incremented by one for each alive neighbour.
@@ -168,63 +113,43 @@ since both elders and prime elders are alive, the alive counter was changed to c
 
 ## Discussion
 
-parse_world_size_arg
-had trouble with wrong error message when empty string from .split
-assert was hard to grasp since it is "backwards thinking".
+Beginning with the base implementations.... `calc_neighbour_positions``run_simulation``count_alive_neighbours` easy, hard part was not getting an output until 
+many functions done, i depended heavily on the debugger function in PyCharm to seek out problems with my code
 
-completed the base implementations 
-populate_world
+During the implementation of the `parse_world_size_arg` function a small problem emerged. A ValueError message was 
+printed out instead of an AssertionError message because the `.split()` function gave back an empty string if the user
+input was "40x". The problem was solved by having the assert sort out empty strings and raise an AssertionError.
 
-calc_neighbour_positions
-this was the most straigt forward function, basically nothing hard, just make a list of tuples of neighbours
+`populate_world`
+flippade axes
 
-run_simulation
-also pretty straight forward
-
-update_world
+`update_world`
 None cells easy fix
 tricky to get the neighbours count right for next gen
-
-count_alive_neighbours
 
 grade d recursive
 did not know you could return (void) this caused a hick-up
 
-grade c load seed from file
+grade c `load_seed_from_file`
 pretty straight forward to implement but getting the population dictionary correct was a bit of a challenge.
 
+grade b`create_logger` and `simulation_decorator`
 
 grade a la till age i jsonfilerna i annan funktion än den som stod skriven i labhandledningen.
-tbh grade a was suprisingly easy, was expecting something much more harder. i suppose every one has their own oppinions 
+tbh grade a was suprisingly easy, was expecting something much more hard. i suppose every one has their own opinions 
 but i found both grade e and grade b implementations harder than grade a. 
 
-`parse_world_size_arg`
+went back over the entire code to see if i could do any improvements, shortened a bit by writing != dead instead
+of alive + elders + primes
 
-`populate_world`
+i have learned..
 
-`calc_neighbour_positions`
+being so new to programming, i sometimes find it hard to think outside the box, knowing how to improve my code
+out of the boundaries of the project or laboratory guidance.
 
-`run_simulation`
-
-`update_world`
-
-`count_alive_neighbours`
-`load_seed_from_file`
-`create_logger` and `simulation_decorator`
+the learning modules prepared....
 
 furthermore...
 
-
-
-## Purpose / Syfte
-Perspective: What does the assignment aim to accomplish?
-Should specify concrete goal(s) which will enable some discussion and analysis.
-## Procedures / Genomförande
-Perspective: How can the results (solution) be reproduced?
-What kind of problems emerged and how were these resolved?
-## Discussion / Diskussion
-Perspective: Has the purpose been fulfilled? Determine the suitability of the implementation...
-should alternative approaches and procedures be considered?
-Personal reflections: What did you learn? What did you find to be particularly difficult? Did the
-learning module(s) prepare you sufficiently for the challenge? What could be improved in regards to
-the assignment? Etc.
+By completing this project and doing all implementations up to grade A, I have demonstrated that I can utilize the
+learning objectives of this course, and thereby the purpose has been fulfilled. 

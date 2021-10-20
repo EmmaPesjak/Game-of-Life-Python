@@ -26,7 +26,7 @@ the user input was validated with the help of the `len()` function to see that t
 or too many values, it had to be for example 80x40. Width and height were extracted from the width_height 
 variable and converted to integers with the `int()` function. With an `if-statement` a ValueError would be raised 
 if either height or width were below one. With an `except`, if the user input was for any reason incorrect the program 
-would write the assert or error message in the console and use the default value of 80x40.
+would write the `assertion` or error message in the console and use the default value of 80x40.
 
 The next step was to complete the `populate_world` function which created the initial population of cells.
 An empty population dictionary was created to be later filled in. In case of that the user would use a seed pattern the 
@@ -113,43 +113,61 @@ since both elders and prime elders are alive, the alive counter was changed to c
 
 ## Discussion
 
-Beginning with the base implementations.... `calc_neighbour_positions``run_simulation``count_alive_neighbours` easy, hard part was not getting an output until 
-many functions done, i depended heavily on the debugger function in PyCharm to seek out problems with my code
+Beginning with the base implementations, the `calc_neighbour_positions`, `run_simulation` and `count_alive_neighbours`
+functions were fairly straight forward and easily implemented. Since the program required all base functions to work in
+its full extent, not getting an output during development made troubleshooting harder. I depended heavily on PyCharm's 
+debugger to help seek out problems within the code.
 
 During the implementation of the `parse_world_size_arg` function a small problem emerged. A ValueError message was 
 printed out instead of an AssertionError message because the `.split()` function gave back an empty string if the user
-input was "40x". The problem was solved by having the assert sort out empty strings and raise an AssertionError.
+input was "40x". The problem was solved by having the `assertion` sort out empty strings and raise an AssertionError.
 
-`populate_world`
-flippade axes
+The `populate_world` function was a bit trickier to get right. In order to make the output pattern conform with the
+provided seed patterns in the code base the axes of (x, y) was flipped to (y, x), again the debugger was a great tool
+to see each cell's state, neighbours and how it was printed out. Having a dictionary within a dictionary also took
+a while to get my head around.
 
-`update_world`
-None cells easy fix
-tricky to get the neighbours count right for next gen
+The `update_world` function was also one of the more challenging functions to implement. I struggled to get the 
+line breaks correct since the (y, x) axes were flipped, but managed to get it correct in the end. Getting the 
+`if-statement` for determining the state of the next generation was also a challenge. I realized I had too many alive 
+cells in the coming generations, since I had accidentally made dead cells with only two alive neighbours live in the 
+next generation, this was easily fixed with putting in an `or`.
 
-grade d recursive
-did not know you could return (void) this caused a hick-up
+I decided to do the grade D implementation of making the `run_simulation` a recursive function, even though I knew 
+I would later remove it since I strived for a higher grade. This was mostly because I wanted some
+more practice on recursive functions, and I knew that I had the extra time. Writing the function was easy, or so I 
+thought, my recursive function worked with the tiny problem of that I had created an infinite loop. Even if I put in 
+a range, the function would not stop at generation 0. I put in an `if-statement` trying to stop the function at 
+generation 0, but I did not know how to stop it and what to return. It took me a while to figure out that it is 
+possible to just return (void) and thereby stopping the infinite loop. However, this function was then remade again 
+for the grade B implementations.
 
-grade c `load_seed_from_file`
-pretty straight forward to implement but getting the population dictionary correct was a bit of a challenge.
+The challenge with the grade C implementation of the `load_seed_from_file` function was to convert the JSON files and 
+thus getting the population dictionary in the correct format. Once again the debugger was of great help to spot out the 
+differences. `literal_eval` from the ast module was new to me, but was very handy for converting the coordinates to 
+the proper format of tuples.
 
-grade b`create_logger` and `simulation_decorator`
+The grade B implementations was what I found particularly difficult with this project, especially the 
+`simulation_decorator` function. Grasping the concept of decorators, the flow of executions, how they work, 
+wrappers and how to call what when is challenging even though we worked with decorators during laboration 3. 
+Doing the `create_logger` and formatting the logger output was more straight forward and reminded a lot of laboration 3.
 
-grade a la till age i jsonfilerna i annan funktion än den som stod skriven i labhandledningen.
-tbh grade a was suprisingly easy, was expecting something much more hard. i suppose every one has their own opinions 
-but i found both grade e and grade b implementations harder than grade a. 
+The grade A requirements were easier than I expected, and I actually found the functions for grade E and B being 
+harder to complete. I suppose that I expected something nearly undoable. I strayed a bit from the note in the project
+guidance where it was stated that the age attribute for JSON files was most appropriate to implement during world 
+update. Instead, I implemented the age attribute in the `load_seed_from_file` function. For me, it made more 
+sense to have it here where the initial population was created. Having completed all the functions I went back over
+the entire code again to see if I could do any improvements. I realised that I could shorten a few `if-statements` in 
+the `simulation_decorator`, `update_world` and `count_alive_neighbours` functions. They had become quite long to 
+include the new cell states of elders and prime elders that also represented aliveness. So instead of setting 
+`if-statements` for each cell state, I could set the requirement as not state dead, which shortened the code 
+significantly and thus improving readability.
 
-went back over the entire code to see if i could do any improvements, shortened a bit by writing != dead instead
-of alive + elders + primes
+This course has taught me basically everything I have demonstrated with this project, since I knew pretty much nothing
+coming in to this course. The learning modules prepared me very well for this project. Being so new to programming, 
+I sometimes find it hard to think outside the box, knowing how to improve my code in any way that is not stated in 
+the project or laboratory guidance. There are probably ways of further improving the code but considering my 
+capabilities I am quite pleased with it. By completing this project and doing all implementations up to grade A, 
+I have demonstrated that I can utilize what the learning objectives of this course has taught me, and thereby the 
+purpose has been fulfilled. 
 
-i have learned..
-
-being so new to programming, i sometimes find it hard to think outside the box, knowing how to improve my code
-out of the boundaries of the project or laboratory guidance.
-
-the learning modules prepared....
-
-furthermore...
-
-By completing this project and doing all implementations up to grade A, I have demonstrated that I can utilize the
-learning objectives of this course, and thereby the purpose has been fulfilled. 

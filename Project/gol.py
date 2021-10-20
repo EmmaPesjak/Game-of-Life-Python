@@ -242,8 +242,8 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
         cb.progress(cb.get_print_value(cell["state"]))
 
         # Determine next generation cell state and age, store in new cell dictionary.
-        if (cell["state"] != cb.STATE_DEAD and
-            count_alive_neighbours(cell["neighbours"], _cur_gen) == 2) \
+        if (cell["state"] != cb.STATE_DEAD
+            and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2)\
                 or (count_alive_neighbours(cell["neighbours"], _cur_gen) == 3):
             new_cell["age"] = (cell["age"] + 1)
             if new_cell["age"] > 10:

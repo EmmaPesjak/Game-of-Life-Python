@@ -29,14 +29,15 @@ if either height or width were below one. With an `except`, if the user input wa
 would write the `assertion` or error message in the console and use the default value of 80x40.
 
 The next step was to complete the `populate_world` function which created the initial population of cells.
-An empty population dictionary was created to be later filled in. In case of that the user would use a seed pattern the 
-`get_pattern` function from the code base was called and stored in the variable pattern. Width and height coordinates
-were extracted from the world size tuple input, and to get every coordinate the `range()` function was used. With
-`itertools product()` the coordinates were matched together for each row and column. Then a `for-loop` that iterated 
-over the coordinates was done. In order to conform with the provided seed patterns in the code base, the axes of 
-the coordinates were flipped to (y, x). Another cell dictionary was created since the population dictionary had
-the coordinates as keys and the cell dictionary as values, the cell dictionary contained the cells states and 
-neighbours (and later also age for the grade A implementation). The edge of the world, to define the border consisted 
+An empty population dictionary was created to be later filled in. The `get_pattern` function from the code base was 
+called and stored in the variable pattern, in case of that the user would use a seed pattern, the function returned
+None if no pattern was to be used. Width and height coordinates were extracted from the world size tuple input, 
+and to get every coordinate the `range()` function was used. With `itertools product()` the coordinates were matched 
+together for each row and column. Then a `for-loop` that iterated over the coordinates was done. 
+In order to conform with the provided seed patterns in the code base, the axes of the coordinates were flipped 
+to (y, x). Another cell dictionary was created since the population dictionary had the coordinates as keys and 
+the cell dictionary as values, the cell dictionary contained the cells states and neighbours 
+(and later also age for the grade A implementation). The edge of the world, to define the border consisted 
 of rim-cells, a special type of cell that instead of a cell dictionary had the value of None. The rim-cells were 
 declared with an `if-statement` which stored the rim-cells in the population dictionary, the rim-cells will always 
 have either a 0 in the coordinates or the coordinate of the width or length minus one. To make sure that the rim-cells 
@@ -162,6 +163,12 @@ the `simulation_decorator`, `update_world` and `count_alive_neighbours` function
 include the new cell states of elders and prime elders that also represented aliveness. So instead of setting 
 `if-statements` for each cell state, I could set the requirement as not state dead, which shortened the code 
 significantly and thus improving readability.
+
+
+!!!!!!! 
+going through the code again, I noticed I was prematurely ageing my newborn cells.
+hittade att jag ageade mina celler för fort, newborns måste börja på 0.
+skriv hur jag tänker med age, elders prime-elders...
 
 This course has taught me basically everything I have demonstrated with this project, since I knew pretty much nothing
 coming in to this course. The learning modules prepared me very well for this project. Being so new to programming, 

@@ -107,7 +107,8 @@ def simulation_decorator(_func):
             p_elders = 0    # Prime elder counter.
             dead = 0        # Dead counter.
 
-            # Increment each counter for each possible cell state.
+            # Increment each counter for each possible cell state, elders and prime
+            # elders also count as alive, skip rim-cells.
             for coords, cell in _population.items():
                 if cell is None:
                     continue
@@ -154,10 +155,12 @@ def parse_world_size_arg(_arg: str) -> tuple:
         width = int(width_height[0])
         height = int(width_height[1])
 
-        # Raise ValueError if either value is below one.
+        # Raise ValueError if either value is below one, zero or negative world size is not valid.
         if height < 1 or width < 1:
             raise ValueError("Both width and height needs to have positive values above zero.")
 
+    # To continue with default values on bad input, catch input errors, print them, and
+    # set default values.
     except (AssertionError, ValueError) as e:
         # Print different errors.
         print(e)
@@ -171,14 +174,22 @@ def parse_world_size_arg(_arg: str) -> tuple:
 
 def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
     """ Populate the world with cells and initial states. """
-    population = {}
 
+    population = {}     # Dictionary for population.
+
+    # Get pattern, if no pattern is to be used, cb.get_pattern returns None.
     pattern = cb.get_pattern(_seed_pattern, _world_size)
-    width_coords = range(_world_size[0])
-    height_coords = range(_world_size[1])
-    coordinates = itertools.product(height_coords, width_coords)
 
-    # Axes are flipped (y, x) to conform with provided seed patterns in code base.
+    # Create ranges of width and height from world size, then create each
+    # coordinate by taking the product of the ranges.
+    width_range = range(_world_size[0])
+    height_range = range(_world_size[1])
+    # Height and width are flipped to conform with PRINTING?.  #FIXA KOMMENTAR
+    coordinates = itertools.product(height_range, width_range)
+
+    # Loop over each cell with their coordinates, and set cell state, either by
+    # pattern or randomized. Axes are flipped (y, x) to conform with provided
+    # seed patterns in code base.
     for y, x in coordinates:
         cell = {}
         # Declare rim cells.
@@ -245,10 +256,17 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
         if (cell["state"] != cb.STATE_DEAD
             and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2)\
                 or (count_alive_neighbours(cell["neighbours"], _cur_gen) == 3):
-            new_cell["age"] = (cell["age"] + 1)
-            if new_cell["age"] > 10:
+
+            # Increment cell age by 1 if not cell is alive for the first time
+            # and therefore have an age of 0.
+            if cell["state"] != cb.STATE_DEAD:
+                new_cell["age"] = (cell["age"] + 1)
+            else:
+                new_cell["age"] = 0     # Newborns have age 0. Fixa denna kommentar
+
+            if new_cell["age"] > 10:     # nya age är 10, start på 0 = until 11th gen, är detta rätt????
                 new_cell["state"] = cb.STATE_PRIME_ELDER
-            elif new_cell["age"] > 4:
+            elif new_cell["age"] > 5:
                 new_cell["state"] = cb.STATE_ELDER
             else:
                 new_cell["state"] = cb.STATE_ALIVE

@@ -51,9 +51,12 @@ def load_seed_from_file(_file_name: str) -> tuple:
     if not _file_name.endswith(".json"):       # Format filename in case user omits suffix.
         _file_name = (_file_name + ".json")
 
-    path = Path(RESOURCES / _file_name)        # Create path to files.
+    path = Path(RESOURCES / _file_name)        # Create path to the file.
+
+    # Open the file and read the data.
     with path.open() as f:
         data = json.load(f)
+        
         world_size = tuple(data["world_size"])     # Format world size to tuple.
         population = {}
         for coordinates, cell in data["population"].items():
@@ -162,10 +165,8 @@ def parse_world_size_arg(_arg: str) -> tuple:
     # To continue with default values on bad input, catch input errors, print them, and
     # set default values.
     except (AssertionError, ValueError) as e:
-        # Print different errors.
         print(e)
         print("Using default world size: 80x40")
-        # Set default values.
         width = 80
         height = 40
 
@@ -184,38 +185,42 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
     # coordinate by taking the product of the ranges.
     width_range = range(_world_size[0])
     height_range = range(_world_size[1])
-    # Height and width are flipped to conform with PRINTING?.  #FIXA KOMMENTAR
+    # Height and width are flipped to conform with seed patterns in code base.
     coordinates = itertools.product(height_range, width_range)
 
     # Loop over each cell with their coordinates, and set cell state, either by
     # pattern or randomized. Axes are flipped (y, x) to conform with provided
     # seed patterns in code base.
     for y, x in coordinates:
-        cell = {}
-        # Declare rim cells.
+        # Check if coordinate is at outer boundaries, if so, set rim cell
+        # i.e. None and continue.
         if x == 0 or y == 0 or x == (_world_size[0] - 1) or y == (_world_size[1] - 1):
-            population[(y, x)] = None       # Store in population dictionary.
+            population[(y, x)] = None
             continue
+
         # In case of seed pattern, set cell state to live or dead according to
-        # coordinates in code base.
+        # coordinates in pattern.
         if pattern is not None:
             if (y, x) in pattern:
                 state = cb.STATE_ALIVE
             else:
                 state = cb.STATE_DEAD
+
         # Randomize cell state if no pattern is to be used.
         else:
-            random_cell = random.randint(0, 20)
-            if random_cell > 16:
+            random_state = random.randint(0, 20)
+            if random_state > 16:
                 state = cb.STATE_ALIVE
             else:
                 state = cb.STATE_DEAD
 
         # Map cell state, neighbours and age to cell dictionary, then map coordinates
         # and cell dictionary to population dictionary.
-        cell["state"] = state
-        cell["neighbours"] = calc_neighbour_positions((y, x))
-        cell["age"] = 0
+        cell = {
+            "state": state,
+            "neighbours": calc_neighbour_positions((y, x)),
+            "age": 0
+        }
         population[(y, x)] = cell
     return population
 
@@ -237,46 +242,52 @@ def run_simulation(_generations: int, _population: dict, _world_size: tuple):
 
 def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     """ Represents a tick in the simulation. """
-    next_gen = {}
-    for coords_, cell in _cur_gen.items():
-        new_cell = {}
+    next_gen = {}   # Create dictionary for next generation.
+
+    # Loop over current cells and coordinates to print current cell state, and set
+    # the state and age for next generation.
+    for coords, cell in _cur_gen.items():
         # Print rim cell, print new line after every last rim cell of each row,
-        # update next generation dictionary.
+        # set the coordinate to rim cell in next generation and continue.
         if cell is None:
             cb.progress(cb.get_print_value(cb.STATE_RIM))
-            if coords_[1] == (_world_size[0] - 1):
+            if coords[1] == (_world_size[0] - 1):
                 cb.progress("\n")
-            next_gen[coords_] = cell
+            next_gen[coords] = cell
             continue
 
         # Print cell that is not rim cell.
         cb.progress(cb.get_print_value(cell["state"]))
 
-        # Determine next generation cell state and age, store in new cell dictionary.
-        if (cell["state"] != cb.STATE_DEAD
-            and count_alive_neighbours(cell["neighbours"], _cur_gen) == 2)\
-                or (count_alive_neighbours(cell["neighbours"], _cur_gen) == 3):
+        # Create new cell for next generation with default values.
+        new_cell = {
+            "state": cb.STATE_DEAD,
+            "neighbours": cell["neighbours"],
+            "age": 0
+        }
 
-            # Increment cell age by 1 if not cell is alive for the first time
-            # and therefore have an age of 0.
+        # Count alive neighbours and check if the count fulfils the survival
+        # requirements for next generation.
+        alive_neighbour_count = count_alive_neighbours(cell["neighbours"], _cur_gen)
+        if (cell["state"] != cb.STATE_DEAD and alive_neighbour_count == 2)\
+                or (alive_neighbour_count == 3):
+
+            # If cell is not a newborn, i.e. cell was alive in previous generation;
+            # increment cell age by 1.
             if cell["state"] != cb.STATE_DEAD:
                 new_cell["age"] = (cell["age"] + 1)
-            else:
-                new_cell["age"] = 0     # Newborns have age 0. Fixa denna kommentar
 
-            if new_cell["age"] > 10:     # nya age är 10, start på 0 = until 11th gen, är detta rätt????
+            # Determine if cell should be prime elder, elder or just alive by
+            # checking the new age.
+            if new_cell["age"] > 10:
                 new_cell["state"] = cb.STATE_PRIME_ELDER
             elif new_cell["age"] > 5:
                 new_cell["state"] = cb.STATE_ELDER
             else:
                 new_cell["state"] = cb.STATE_ALIVE
-        else:
-            new_cell["state"] = cb.STATE_DEAD
-            new_cell["age"] = 0
 
-        # Store the neighbours for next generation and update next generation dictionary.
-        new_cell["neighbours"] = cell["neighbours"]
-        next_gen[coords_] = new_cell
+        # Store the new cell in the next generation dictionary.
+        next_gen[coords] = new_cell
     return next_gen
 
 

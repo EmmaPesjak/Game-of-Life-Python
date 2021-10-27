@@ -28,6 +28,55 @@ variable and converted to integers with the `int()` function. With an `if-statem
 if either height or width were below one. With an `except`, if the user input was for any reason incorrect the program 
 would write the `assertion` or error message in the console and use the default value of 80x40.
 
+
+    population = {}     # Dictionary for population.
+
+    # Get pattern, if no pattern is to be used, cb.get_pattern returns None.
+    pattern = cb.get_pattern(_seed_pattern, _world_size)
+
+    # Create ranges of width and height from world size, then create each
+    # coordinate by taking the product of the ranges.
+    width_range = range(_world_size[0])
+    height_range = range(_world_size[1])
+    # Height and width are flipped to conform with seed patterns in code base.
+    coordinates = itertools.product(height_range, width_range)
+
+    # Loop over each cell with their coordinates, and set cell state, either by
+    # pattern or randomized. Axes are flipped (y, x) to conform with provided
+    # seed patterns in code base.
+    for y, x in coordinates:
+        # Check if coordinate is at outer boundaries, if so, set rim cell state
+        # i.e. None and continue.
+        if x == 0 or y == 0 or x == (_world_size[0] - 1) or y == (_world_size[1] - 1):
+            population[(y, x)] = None
+            continue
+
+        # In case of seed pattern, set cell state to live or dead according to
+        # coordinates in pattern.
+        if pattern is not None:
+            if (y, x) in pattern:
+                state = cb.STATE_ALIVE
+            else:
+                state = cb.STATE_DEAD
+
+        # Randomize cell state if no pattern is to be used.
+        else:
+            random_state = random.randint(0, 20)
+            if random_state > 16:
+                state = cb.STATE_ALIVE
+            else:
+                state = cb.STATE_DEAD
+
+        # Map cell state, neighbours and age to cell dictionary, then map coordinates
+        # and cell dictionary to population dictionary.
+        cell = {
+            "state": state,
+            "neighbours": calc_neighbour_positions((y, x)),
+            "age": 0
+        }
+        population[(y, x)] = cell
+    return population
+
 The next step was to complete the `populate_world` function which created the initial population of cells.
 An empty population dictionary was created to be later filled in. The `get_pattern` function from the code base was 
 called and stored in the variable pattern, in case of that the user would use a seed pattern, the function returned
@@ -35,7 +84,7 @@ None if no pattern was to be used. Width and height coordinates were extracted f
 and to get every coordinate the `range()` function was used. With `itertools product()` the coordinates were matched 
 together for each row and column. Then a `for-loop` that iterated over the coordinates was done. 
 In order to conform with the provided seed patterns in the code base, the axes of the coordinates were flipped 
-to (y, x). Another cell dictionary was created since the population dictionary had the coordinates as keys and 
+to (y, x). #!!!!!!### Another cell dictionary was created since the population dictionary had the coordinates as keys and 
 the cell dictionary as values, the cell dictionary contained the cells states and neighbours 
 (and later also age for the grade A implementation). The edge of the world, to define the border consisted 
 of rim-cells, a special type of cell that instead of a cell dictionary had the value of None. The rim-cells were 
@@ -61,6 +110,8 @@ first cleared the console, then called the `update_world` function to update the
 population states. Lastly the program was delayed by 0.2 milliseconds so that the user actually had time to see the 
 different generation ticks.
 
+
+OJOJOJO
 Then the `update_world` function was implemented. An empty dictionary for the next generation was made.
 A `for-loop` then iterated over the coordinates and cells in the input current generation dictionary. A new cell 
 dictionary was also made within the `for-loop` for the next generation. Since the rim-cells and ordinary cells 
@@ -114,6 +165,9 @@ since both elders and prime elders are alive, the alive counter was changed to c
 
 ## Discussion
 
+!!!!! skriv hur jag kom fram til axis flip
+
+
 Beginning with the base implementations, the `calc_neighbour_positions`, `run_simulation` and `count_alive_neighbours`
 functions were fairly straight forward and easily implemented. Since the program required all base functions to work in
 its full extent, not getting an output during development made troubleshooting harder. I depended heavily on PyCharm's 
@@ -127,6 +181,19 @@ The `populate_world` function was a bit trickier to get right. In order to make 
 provided seed patterns in the code base the axes of (x, y) was flipped to (y, x), again the debugger was a great tool
 to see each cell's state, neighbours and how it was printed out. Having a dictionary within a dictionary also took
 a while to get my head around.
+
+
+
+
+
+
+OJOJOJ Förklara varför default values
+
+"1. Any live cell with two or three live neighbours survives.
+2. Any dead cell with three live neighbours becomes a live cell.
+3. All other live cells die in the next generation. Similarly, all other dead cells
+stay dead."
+
 
 The `update_world` function was also one of the more challenging functions to implement. I struggled to get the 
 line breaks correct since the (y, x) axes were flipped, but managed to get it correct in the end. Getting the 

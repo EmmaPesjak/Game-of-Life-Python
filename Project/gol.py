@@ -48,32 +48,33 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def load_seed_from_file(_file_name: str) -> tuple:
     """ Load population seed from file. Returns tuple: population (dict) and world_size (tuple). """
-    if not _file_name.endswith(".json"):       # Format filename in case user omits suffix.
+    # Format filename in case user omits the suffix.
+    if not _file_name.endswith(".json"):
         _file_name = (_file_name + ".json")
 
-    path = Path(RESOURCES / _file_name)        # Create path to the file.
-
-    # Open the file and read the data.
+    # Create path to the file, open the file and read the data.
+    path = Path(RESOURCES / _file_name)
     with path.open() as f:
         data = json.load(f)
-        
-        world_size = tuple(data["world_size"])     # Format world size to tuple.
+
+        # Convert world size to tuple. Then create population dictionary, and loop over
+        # JSON population dictionary, converting data where needed to conform with the program.
+        # Add cell age and store all information in the new population dictionary.
+        world_size = tuple(data["world_size"])
         population = {}
         for coordinates, cell in data["population"].items():
-            coords = ast.literal_eval(coordinates)     # Format cell coordinates to tuple.
-            cell_dict = {}
+            coords = ast.literal_eval(coordinates)
             if cell is None:
-                population[coords] = None       # Add rim-cells to population dictionary.
+                population[coords] = None
                 continue
 
-            cell_dict["state"] = cell["state"]      # Add cell states to cell dictionary.
-            # Format list of tuple neighbours.
-            formatted_neighbours = [tuple(n) for n in cell["neighbours"]]
-            # Add neighbours to cell dictionary.
-            cell_dict["neighbours"] = formatted_neighbours
-            cell_dict["age"] = 0
-            # Add coordinates and cell dictionary to population dictionary.
+            cell_dict = {
+                "state": cell["state"],
+                "neighbours": [tuple(n) for n in cell["neighbours"]],
+                "age": 0
+            }
             population[coords] = cell_dict
+
     return (population, world_size)
 
 
@@ -111,7 +112,7 @@ def simulation_decorator(_func):
             dead = 0        # Dead counter.
 
             # Increment each counter for each possible cell state, elders and prime
-            # elders also count as alive, skip rim-cells.
+            # elders also count as alive, skip rim cells.
             for coords, cell in _population.items():
                 if cell is None:
                     continue
@@ -126,12 +127,12 @@ def simulation_decorator(_func):
                 elif cell["state"] == cb.STATE_DEAD:
                     dead = dead + 1
 
-            # Format logger.
+            # Format logger output.
             gol_logger.info(f"GENERATION {generation}\n  Population: {population}\n  "
                             f"Alive: {alive}\n  Elders: {elders}\n  Prime Elders: "
                             f"{p_elders}\n  Dead: {dead}")
 
-            # Call decorated function and store the updated population states.
+            # Call decorated function and store the updated population states.  # Detta syftar nog fel
             _population = _func(generation, _population, _world_size)
             sleep(0.2)
 
@@ -249,6 +250,7 @@ def update_world(_cur_gen: dict, _world_size: tuple) -> dict:
     for coords, cell in _cur_gen.items():
         # Print rim cell, print new line after every last rim cell of each row,
         # set the coordinate to rim cell in next generation and continue.
+        # Cell coordinates from dictionary have flipped axes, hence coords[1].
         if cell is None:
             cb.progress(cb.get_print_value(cb.STATE_RIM))
             if coords[1] == (_world_size[0] - 1):

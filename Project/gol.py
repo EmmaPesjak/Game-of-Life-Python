@@ -48,6 +48,7 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def load_seed_from_file(_file_name: str) -> tuple:
     """ Load population seed from file. Returns tuple: population (dict) and world_size (tuple). """
+
     # Format filename in case user omits the suffix.
     if not _file_name.endswith(".json"):
         _file_name = (_file_name + ".json")
@@ -57,35 +58,40 @@ def load_seed_from_file(_file_name: str) -> tuple:
     with path.open() as f:
         data = json.load(f)
 
-        # Convert world size to tuple. Then create population dictionary, and loop over
-        # JSON population dictionary, converting data where needed to conform with the program.
-        # Add cell age and store all information in the new population dictionary.
+        # Convert world size to tuple.
         world_size = tuple(data["world_size"])
+
+        # Create population dictionary, loop over JSON population dictionary items.
         population = {}
-        for coordinates, cell in data["population"].items():
-            coords = ast.literal_eval(coordinates)
-            if cell is None:
-                population[coords] = None
+        for json_coordinates, json_cell in data["population"].items():
+            # Convert string coordinates to tuple.
+            coordinates = ast.literal_eval(json_coordinates)
+            # Set rim cell to value None and continue
+            if json_cell is None:
+                population[coordinates] = None
                 continue
 
-            cell_dict = {
-                "state": cell["state"],
-                "neighbours": [tuple(n) for n in cell["neighbours"]],
+            # Store cell state in a new cell dictionary, convert neighbours from JSON
+            # file to list of tuples and store. Add age and store all information in
+            # the new population dictionary.
+            cell = {
+                "state": json_cell["state"],
+                "neighbours": [tuple(n) for n in json_cell["neighbours"]],
                 "age": 0
             }
-            population[coords] = cell_dict
+            population[coordinates] = cell
 
-    return (population, world_size)
+    return tuple([population, world_size])
 
 
 def create_logger() -> logging.Logger:
     """ Creates a logging object to be used for reports. """
 
-    # Set up logger at info level.
+    # Set up the logger at info level.
     gol_logger = logging.getLogger("gol_logger")
     gol_logger.setLevel(logging.INFO)
 
-    # Set log path, configure file handler at info level and see that file
+    # Set log path, configure file handler at info level and see to that the file
     # will be opened in write mode.
     path = Path(RESOURCES / "gol.log")
     file_handler = logging.FileHandler(path, mode="w")
@@ -100,6 +106,8 @@ def simulation_decorator(_func):
 
     def wrapper_function(_generations: int, _population: dict, _world_size: tuple):
         """ Wrapper function, calculates log information and calls decorated function """
+
+        # Iterate over each generation.
         for generation in range(0, _generations):
             cb.clear_console()
 
@@ -132,7 +140,7 @@ def simulation_decorator(_func):
                             f"Alive: {alive}\n  Elders: {elders}\n  Prime Elders: "
                             f"{p_elders}\n  Dead: {dead}")
 
-            # Call decorated function and store the updated population states.  # Detta syftar nog fel
+            # Call decorated function and store the updated population states.
             _population = _func(generation, _population, _world_size)
             sleep(0.2)
 
@@ -171,7 +179,7 @@ def parse_world_size_arg(_arg: str) -> tuple:
         width = 80
         height = 40
 
-    return (width, height)
+    return tuple([width, height])
 
 
 def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
@@ -229,6 +237,7 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
 def calc_neighbour_positions(_cell_coord: tuple) -> list:
     """ Calculate neighbouring cell coordinates in all directions (cardinal + diagonal).
     Returns list of tuples. """
+
     # Axes are flipped (y, x) to conform with provided seed patterns in code base.
     y, x = _cell_coord
     return [(y, (x - 1)), ((y + 1), (x - 1)), ((y + 1), x), ((y + 1), (x + 1)), (y, (x + 1)),
@@ -304,6 +313,7 @@ def count_alive_neighbours(_neighbours: list, _cells: dict) -> int:
             living_counter = living_counter + 1
 
     return living_counter
+
 
 def main():
     """ The main program execution. YOU MAY NOT MODIFY ANYTHING IN THIS FUNCTION!! """

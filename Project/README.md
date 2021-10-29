@@ -1,5 +1,5 @@
 # Project
-Emma Pesjak 2021-10-XX
+Emma Pesjak 2021-10-29
 
 ## Environment & Tools
 The project was performed on a Windows 10 PC with PyCharm 2021.2.1, Python 3.9.7 and Git version 2.33.0.windows.2. 
@@ -23,7 +23,7 @@ The user input was a string with the format "widthxheight". And the function nee
 a tuple. By splitting the string input at the "x" with the `.split()` function into a width_height variable, 
 values for width and height could be extracted. But first in a `try` block, with an `assert-statement` 
 the user input was validated with the help of the `len()` function to see that the user had not written too few 
-or too many values, it had to be for example 80x40. If not, an AssertionError would be raised. Width and height 
+or too many values, it had to be for example "80x40". If not, an AssertionError would be raised. Width and height 
 were extracted from the width_height variable and converted to integers with the `int()` function. 
 With an `if-statement` a ValueError would be raised if either height or width were below one. With an `except`, 
 if the user input was for any reason incorrect the program would write the `assertion` or error message in the 
@@ -35,15 +35,15 @@ called and stored in the variable pattern, in case of that the user would use a 
 None if no pattern was to be used. Width and height coordinates were extracted from the world size tuple input, 
 and to get every coordinate the `range()` function was used. With `itertools product()` the coordinates were matched 
 together for each column and row, flipping the axes to conform with the provided patterns in the code base. 
-Then a `for-loop` that iterated over the coordinates was implemented. Here again, the axes of (x, y ) was flipped
-to (y, x) to conform with the provided seed patterns in the code base.
-To define the border, the edge of the world consisted of rim-cells, a special type of cell that instead of a cell 
-dictionary had the value of None. The rim-cells were declared with an `if-statement` which stored the rim-cells 
-in the population dictionary, the rim-cells will always have either a 0 in the coordinates or the coordinate of 
-the width or length minus one. To make sure that the rim-cells would not get a cell state, a `continue` was put in 
+Then a `for-loop` that iterated over the coordinates was implemented. Here again, the axes of (x, y) was flipped
+to (y, x) to conform with the provided seed patterns in the code base. To define the border, the edge of the world 
+consisted of rim-cells, a special type of cell that instead of a cell dictionary had the value of None. 
+The rim-cells were declared with an `if-statement` which stored the rim-cells in the population dictionary, 
+the rim-cells will always have either a 0 in the coordinates or the coordinate of the width or length minus one. 
+To make sure that the rim-cells would not get a value other than None, a `continue` was put in 
 the `if-statement` to continue to the next cell coordinates. With another `if-statement` the rest of the cells were 
 set to alive or dead by comparing coordinates with the coordinates in the pattern variable in case of if the user 
-used a seed pattern. The `else` then would randomize the cell states if no pattern were to be used. 
+used a seed pattern. The `else` then would randomize the cell states if no pattern was to be used. 
 A randomization from 0-20 was done by using the `randint()` function from the random module. A value above 16 would 
 set the cell as alive and a value of 16 or below would set the cell as dead. A cell dictionary was created since
 the population dictionary had the coordinates as keys and the cell dictionary as values. Cell state and neighbours 
@@ -52,10 +52,10 @@ by calling the `calc_neighbour_positions` function. Lastly the cell dictionary w
 the population dictionary.
 
 The `calc_neighbour_positions` function was then completed simply by getting the coordinates from the 
-input "_cell_coord" and putting these into the variables y and x. This might seem backwards but the axes were flipped 
-in order to conform with the provided seed patterns in the code base. The function then returned a list of tuples
-with the neighbours coordinates calculated by offsetting their positions in all directions (north, west, south, 
-east, north-west, north-east, south-west and south-east)
+input "_cell_coord" and putting these into the variables y and x. This might again seem backwards but the axes 
+were flipped in order to conform with the provided seed patterns in the code base. The function then returned a 
+list of tuples with the neighbours coordinates calculated by offsetting their positions in all directions 
+(north, west, south, east, north-west, north-east, south-west and south-east).
 
 The first version of the `run_simulation` function was done with a `for-loop` that iterated over each generation, 
 first cleared the console, then called the `update_world` function to update the world and store the next generation
@@ -96,7 +96,7 @@ JSON file dictionary, cell coordinates were converted to tuples using `literal_e
 Rim cells with the value None were mapped to their cell coordinates and stored in the population dictionary. In a 
 new cell dictionary the cell state were extracted from the JSON data, the list of neighbours
 were converted to a list of tuples with the `tuple()` function in a small `for-loop` (and later also cell age was 
-added here. Lastly the cell dictionary was then mapped with the coordinates in the population dictionary.
+added here). Lastly the cell dictionary was then mapped with the coordinates in the population dictionary.
 
 For the grade B requirements, the functions `create_logger` and `simulation_decorator` were completed. 
 The `run_simulation` function was yet again changed and decorated to the definition stated in the project guidance.
@@ -110,9 +110,6 @@ logging information was calculated by counting the entire population and impleme
 The log output was then formatted with an `f-string`. Then the decorated function was called to store the updated
 cell states. Then like in the base implementation the program was delayed by 0.2 milliseconds so that the user 
 actually had time to see the different generation ticks.
-
-FORMULERA OM DEN NÄST SISTA MENINGEN OVAN?
-
 
 For the grade A implementation of aging of cells, several functions needed to be adjusted. In `load_seed_from_file` 
 and `populate_world` the age key and value of zero was to be added to each cell dictionary. With the added cell 

@@ -187,8 +187,11 @@ def populate_world(_world_size: tuple, _seed_pattern: str = None) -> dict:
 
     population = {}     # Dictionary for population.
 
-    # Get pattern, if no pattern is to be used, cb.get_pattern returns None.
-    pattern = cb.get_pattern(_seed_pattern, _world_size)
+    # By default no pattern is used. If seed pattern argument is given,
+    # get pattern from code base.
+    pattern = None
+    if _seed_pattern is not None:
+        pattern = cb.get_pattern(_seed_pattern, _world_size)
 
     # Create ranges of width and height from world size, then create each
     # coordinate by taking the product of the ranges.

@@ -30,20 +30,20 @@ if the user input was for any reason incorrect the program would write the `asse
 console and use the default value of 80x40.
 
 The next step was to complete the `populate_world` function which created the initial population of cells.
-An empty population dictionary was created to be later filled in. The `get_pattern` function from the code base was 
-called and stored in the variable pattern, in case of that the user would use a seed pattern, the function returned
-None if no pattern was to be used. Width and height coordinates were extracted from the world size tuple input, 
-and to get every coordinate the `range()` function was used. With `itertools product()` the coordinates were matched 
-together for each column and row, flipping the axes to conform with the provided patterns in the code base. 
-Then a `for-loop` that iterated over the coordinates was implemented. Here again, the axes of (x, y) was flipped
-to (y, x) to conform with the provided seed patterns in the code base. To define the border, the edge of the world 
-consisted of rim-cells, a special type of cell that instead of a cell dictionary had the value of None. 
-The rim-cells were declared with an `if-statement` which stored the rim-cells in the population dictionary, 
-the rim-cells will always have either a 0 in the coordinates or the coordinate of the width or length minus one. 
-To make sure that the rim-cells would not get a value other than None, a `continue` was put in 
+An empty population dictionary was created to be later filled in. By default, a pattern variable was set to None,
+but if the user gave an argument for a seed pattern the `get_pattern` function from the code base was 
+called in an `if-statement` and stored in the variable pattern. Width and height coordinates were extracted from the 
+world size tuple input, and to get every coordinate the `range()` function was used. With `itertools product()` the 
+coordinates were matched together for each column and row, flipping the axes to conform with the provided patterns 
+in the code base. Then a `for-loop` that iterated over the coordinates was implemented. Here again, the axes of 
+(x, y) was flipped to (y, x) to conform with the provided seed patterns in the code base. To define the border, 
+the edge of the world consisted of rim-cells, a special type of cell that instead of a cell dictionary had the 
+value of None. The rim-cells were declared with an `if-statement` which stored the rim-cells in the population
+dictionary, the rim-cells will always have either a 0 in the coordinates or the coordinate of the width or 
+length minus one. To make sure that the rim-cells would not get a value other than None, a `continue` was put in 
 the `if-statement` to continue to the next cell coordinates. With another `if-statement` the rest of the cells were 
 set to alive or dead by comparing coordinates with the coordinates in the pattern variable in case of if the user 
-used a seed pattern. The `else` then would randomize the cell states if no pattern was to be used. 
+used a seed pattern. The `else` would then otherwise randomize the cell states if no pattern was to be used. 
 A randomization from 0-20 was done by using the `randint()` function from the random module. A value above 16 would 
 set the cell as alive and a value of 16 or below would set the cell as dead. A cell dictionary was created since
 the population dictionary had the coordinates as keys and the cell dictionary as values. Cell state and neighbours 
@@ -143,7 +143,7 @@ The `update_world` function was also one of the more challenging functions to im
 line breaks correct since the (y, x) axes were flipped, but managed to get it correct in the end. Getting the 
 `if-statement` for determining the state of the next generation was also a challenge. I realized I had too many alive 
 cells in the coming generations, since I had accidentally made dead cells with only two alive neighbours live in the 
-next generation, this was easily fixed with putting in an `or`. At first could not decide if I wanted to break out 
+next generation, this was easily fixed with putting in an `or`. At first, I could not decide if I wanted to break out 
 the calculations for next generation into a separate function since the whole `update_world` function is quite large.
 I decided to stick with the current implementation since I had managed to shorten it quite a bit with the 
 default cell values put in the next generation cell dictionary. 

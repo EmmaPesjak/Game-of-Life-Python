@@ -40,7 +40,11 @@ function, named according to the laboratory guidance. The information that was s
 according to the study guidance was sequence number with its corresponding fibonacci value. In order to do this
 a list for each parameter was created. the `values` list got its information from `fib_details` and the `seq_nr`
 got its information from a `while` loop that appended sequence numbers by counting backwards from the `nth_nmb` to 0.
-Sequence number and fibonacci value were then written to file with `.write`, this by zipping them together with `zip()`. 
+Sequence number and fibonacci value were then written to file with `.write`, this by zipping them together with `zip()`.
+
+#### Edit modified solution:
+The variable "RESOURCES" with a path to the resource folder was not being used throughout the program. This file path 
+was added in `def create_logger` and `def write_to_file` in order to conform with the laboratory guidance. 
 
 ## Discussion
 
@@ -66,3 +70,8 @@ left/right justification, this I found online. While this laboration was much mo
 for some reason it did not feel as daunting. The previous lab taught me to see the structured code and start 
 implementing bit by bit. Another thing I found challenging was that in order to see if the code worked, I had to 
 complete several functions to be able to see my output, this also made troubleshooting a bit harder. 
+
+#### Edit modified solution:
+
+I must have completely missed the "RESOURCES" variable during the first implementation, I think I was very focused
+on examples from the course literature and not reading the assignment properly.

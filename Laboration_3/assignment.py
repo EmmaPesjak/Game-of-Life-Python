@@ -29,9 +29,10 @@ RESOURCES = Path(__file__).parent / "../_Resources/"
 
 def create_logger() -> logging.Logger:
     """Create and return logger object."""
-    with open("../_Resources/ass3_log_conf.json") as f:     # Open json file with custom logger configuration.
-        data = json.load(f)                                 # Load into variable.
-    logging.config.dictConfig(data)                         # Set up logging with file in variable.
+
+    with open(RESOURCES / "ass3_log_conf.json") as f:     # Open json file with custom logger configuration.
+        data = json.load(f)                               # Load into variable.
+    logging.config.dictConfig(data)                       # Set up logging with file in variable.
     return logging.getLogger("ass_3_logger")
 
 
@@ -127,7 +128,7 @@ def print_statistics(fib_details: dict, nth_value: int):
 def write_to_file(fib_details: dict):
     """Function to write information to file."""
     for name, fibb in fib_details.items():
-        with open(f'../_Resources/{name.replace(" ", "_")}.txt', "w") as file:  # Open/create file in write mode.
+        with open(RESOURCES / f'{name.replace(" ", "_")}.txt', "w") as file:  # Open/create file in write mode.
             values = fibb[1]        # Make list for fibonacci values.
             seq_nr = []             # Make list of sequence numbers.
             i = len(values)         # Variable to count amount of fibonacci values.
